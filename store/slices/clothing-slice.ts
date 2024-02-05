@@ -4,13 +4,15 @@ export type ClothingItem = {
 	id: string;
 	title: string;
 	images: string[];
-	date: string;
+	date: string | null;
 	tags: Tag[];
+	type: string;
 };
 
 export type Outfit = {
 	id: string;
 	title: string;
+	images: string[];
 	clothes: ClothingItem[];
 	date: Date;
 	tags: Tag[];

@@ -6,10 +6,10 @@ import { Filter, Tag } from '../store/slices/clothing-slice';
 
 export type TagFilterProps = {
 	onChange: (selectedItems: any[]) => any;
+	tags: Tag[];
 };
 
-export default function TagFilterDropdown({ onChange }: TagFilterProps) {
-	const tags = useClothingSelector((state) => state.tags);
+export default function TagFilterDropdown({ onChange, tags }: TagFilterProps) {
 	const [selectedItems, setSelectedItems] = useState<Tag[]>([]);
 
 	console.log('selectedItems', selectedItems);
@@ -18,8 +18,8 @@ export default function TagFilterDropdown({ onChange }: TagFilterProps) {
 		<View style={{ flex: 1 }}>
 			<DropdownMultiselectView
 				data={tags}
-				displayKey='name'
-				displayValue='name'
+				displayKey='title'
+				displayValue='title'
 				selectedItem={selectedItems}
 				setSelectedItem={setSelectedItems}
 				// @ts-ignore

@@ -50,7 +50,7 @@ export default function ClothingCard({
 						aspectRatio: 1,
 						borderRadius: 10,
 					}}
-					source={{ uri: 'https://picsum.photos/seed/696/3000/2000' }}
+					source={{ uri: item.images[0] }}
 					placeholder={blurhash}
 					contentFit='cover'
 					transition={1000}

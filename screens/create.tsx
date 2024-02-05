@@ -5,7 +5,7 @@ import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
 import { Tag } from '../store/slices/clothing-slice';
 import { useClothingDispatch } from '../store/hooks';
-import Button from '../components/button';
+import Button from '../components/custom-button.tsx';
 import { saveClothing } from '../store/slices/clothing-slice';
 import { useNavigation } from '@react-navigation/native';
 import { uniqueId } from '../utils/helpers.ts';
@@ -15,13 +15,15 @@ import { useClothingSelector } from '../store/hooks';
 import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav.tsx';
 import ImageUpload from '../components/image-upload.tsx';
 import { AntDesign } from '@expo/vector-icons';
+import { DateTime } from 'luxon';
+import CustomButton from '../components/custom-button.tsx';
 
 export default function CreateScreen() {
 	const navigation = useNavigation();
 	const dispatch = useClothingDispatch();
 	const [clothingItemName, setClothingItemName] = useState<string>('');
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-	const [dateTime, setDateTime] = useState<Date>(new Date());
+	const [dateTime, setDateTime] = useState<DateTime>(DateTime.now());
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const [tagInputText, setTagInputText] = useState<string>('');
 	const tags = useClothingSelector((state) => state.tags);
@@ -30,7 +32,7 @@ export default function CreateScreen() {
 	const clearFormData = () => {
 		setClothingItemName('');
 		setSelectedTags([]);
-		setDateTime(new Date());
+		setDateTime(DateTime.now());
 		setTagInputText('');
 		setUploadedImageUris([]);
 	};
@@ -41,8 +43,9 @@ export default function CreateScreen() {
 				id: uniqueId(),
 				title: clothingItemName,
 				images: uploadedImageUris,
-				date: dateTime.toString(),
+				date: dateTime.toISO(),
 				tags: selectedTags,
+				type: selectedTab,
 			})
 		);
 		clearFormData();
@@ -82,7 +85,9 @@ export default function CreateScreen() {
 					style={{ marginBottom: 20 }}
 				/>
 				<CustomDateTimePicker
-					selectedDateTime={(dateTime) => setDateTime(dateTime)}
+					selectedDateTime={(dateTime) =>
+						setDateTime(DateTime.fromJSDate(dateTime))
+					}
 					style={{ marginBottom: 20 }}
 				/>
 				{selectedTab === 'clothing' ? (
@@ -135,7 +140,7 @@ export default function CreateScreen() {
 					</View>
 				)}
 			</View>
-			<Button title='Save' onPress={() => saveClothingItem()} />
+			<CustomButton title='Save' onPress={() => saveClothingItem()} />
 		</ScreenWrapper>
 	);
 }

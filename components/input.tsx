@@ -24,6 +24,7 @@ export default function Input({
 	return (
 		<TextInput
 			value={value}
+			autoCorrect={false}
 			onSubmitEditing={onSubmitEditing}
 			onChangeText={(newText) => onChangeText(newText)}
 			style={{

@@ -1,6 +1,13 @@
-import { useState } from 'react';
-import { Text, View, FlatList, Alert } from 'react-native';
-import Button from '../components/button';
+import { useState, useEffect } from 'react';
+import {
+	Text,
+	View,
+	FlatList,
+	Alert,
+	ScrollView,
+	TouchableOpacity,
+} from 'react-native';
+import Button from '../components/custom-button';
 import ScreenWrapper from '../components/screen-wrapper';
 import Toast from '../components/toast';
 import Input from '../components/input';
@@ -8,32 +15,57 @@ import SearchInput from '../components/search-input';
 import CustomDateTimePicker from '../components/custom-date-time-picker';
 import FilterDropdown from '../components/filter-dropdown';
 import ClothingCard from '../components/clothing-card';
-import TagInput from '../components/tag-input';
+import TagFilter from '../components/tag-filter';
 import ImageUpload from '../components/image-upload';
 import { useClothingSelector } from '../store/hooks';
 import { useClothingDispatch } from '../store/hooks';
+import { AntDesign } from '@expo/vector-icons';
+
 import {
 	ClothingItem,
 	Outfit,
+	Tag,
 	deleteClothing,
 } from '../store/slices/clothing-slice';
 import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav';
 import { useNavigation } from '@react-navigation/native';
+import { DateTime } from 'luxon';
 
 export default function HomeScreen() {
 	const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
+	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [searchTerm, setSearchTerm] = useState<string>('');
+	const [filteredClothes, setFilteredClothes] = useState<ClothingItem[]>([]);
+	const [filteredOutfits, setFilteredOutfits] = useState<ClothingItem[]>([]);
+	const tags = useClothingSelector((state) => state.tags);
 	const dispatch = useClothingDispatch();
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const navigation = useNavigation();
-	// @Todo in theory you should not be able to create an outfit without having created a clothing item first
-	// so the null check can happen on this object only! Write a test for this.
-
-	const clothes = useClothingSelector(
+	const allClothing = useClothingSelector(
 		(state) => state.individualClothingItems
 	);
+	const clothes = allClothing.filter((item) => item.type === 'clothing');
+	const outfits = allClothing.filter((item) => item.type === 'outfit');
 
-	console.log('CLOTHES', clothes);
+	useEffect(() => {
+		if (searchTerm !== '') {
+			console.log('we are searching');
+			if (selectedTab === 'clothing') {
+				console.log('we are searching clothes', clothes);
+				let filteredClothes = clothes.filter((item) =>
+					item.title.toLowerCase().includes(searchTerm.toLowerCase())
+				);
+				setFilteredClothes(filteredClothes);
+				console.log('we have searched clothes', filteredClothes);
+			} else {
+				console.log('we are searching outfits');
+				let filteredOutfits = outfits.filter((item) =>
+					item.title.toLowerCase().includes(searchTerm.toLowerCase())
+				);
+				setFilteredOutfits(filteredOutfits);
+			}
+		}
+	}, [searchTerm]);
 
 	const doDelete = (item: ClothingItem | Outfit) => {
 		Alert.alert('Delete', `Are you sure you want to delete ${item.title}`, [
@@ -46,7 +78,19 @@ export default function HomeScreen() {
 		]);
 	};
 
-	if (clothes.length === 0) {
+	const toggleTagSelection = (tag: Tag) => {
+		if (selectedTags.includes(tag)) {
+			const itemIndex = selectedTags.findIndex((item) => {
+				return item.id === tag.id;
+			});
+			const filteredTags = selectedTags.splice(itemIndex, 1);
+			setSelectedTags(filteredTags);
+		} else {
+			setSelectedTags([...selectedTags, tag]);
+		}
+	};
+
+	if (allClothing.length === 0) {
 		return (
 			<ScreenWrapper>
 				<View
@@ -71,51 +115,150 @@ export default function HomeScreen() {
 		<ScreenWrapper>
 			<View
 				style={{
-					flexDirection: 'row',
 					marginBottom: 20,
+					flexDirection: 'column',
 				}}
 			>
-				<View style={{ flex: 2 }}>
-					<FilterDropdown
-						onChange={(filters) => console.log('filters', filters)}
-					/>
-				</View>
-				<View style={{ flex: 2 }}>
+				<View style={{ marginBottom: 10 }}>
 					<SearchInput
 						value={searchTerm}
 						onChangeText={(searchTerm) => setSearchTerm(searchTerm)}
 					/>
 				</View>
+				<ScrollView
+					horizontal={true}
+					style={{ flexDirection: 'row', marginTop: 20 }}
+				>
+					<TagFilter
+						selectedTags={selectedTags}
+						onPress={(tag) => toggleTagSelection(tag)}
+						tags={tags}
+					/>
+				</ScrollView>
 			</View>
 			<ClothingOutfitTabNav
-				onPress={(selectedTab) => setSelectedTab(selectedTab)}
+				onPress={(selectedTab) => {
+					setSelectedTab(selectedTab);
+					setSearchTerm('');
+				}}
 				selectedTab={selectedTab}
 			/>
 
-			<FlatList
-				columnWrapperStyle={{
-					marginTop: 20,
-					flex: 1,
-					justifyContent: 'space-around',
-				}}
-				numColumns={2}
-				data={clothes}
-				renderItem={({ item }) => (
-					<ClothingCard
-						item={item}
-						onPress={() => {
-							// navigation.navigate('TabNavigator', {
-							// 	screen: 'create',
-							// });
-						}}
-						onDelete={(item) => {
-							doDelete(item);
-						}}
-						key={item.id}
-					/>
-				)}
-				keyExtractor={(item) => item.id}
-			/>
+			{selectedTab === 'clothing' ? (
+				<FlatList
+					columnWrapperStyle={{
+						marginTop: 20,
+						flex: 1,
+						justifyContent: 'space-around',
+					}}
+					numColumns={2}
+					data={searchTerm !== '' ? filteredClothes : clothes}
+					renderItem={({ item }) => (
+						<ClothingCard
+							item={item}
+							onPress={() => {
+								// navigation.navigate('TabNavigator', {
+								// 	screen: 'create',
+								// });
+							}}
+							onDelete={(item) => {
+								doDelete(item);
+							}}
+							key={item.id}
+						/>
+					)}
+					keyExtractor={(item) => item.id}
+					extraData={clothes}
+					ListFooterComponent={
+						<View>
+							<TouchableOpacity
+								style={{
+									flex: 1,
+									marginTop: 20,
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<View
+									style={{
+										flex: 1,
+										width: 120,
+										height: 120,
+										aspectRatio: 1,
+										borderRadius: 10,
+										backgroundColor: '#d9d9d9',
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<AntDesign
+										name='pluscircleo'
+										size={34}
+										color='#444'
+									/>
+								</View>
+							</TouchableOpacity>
+						</View>
+					}
+				/>
+			) : (
+				<FlatList
+					columnWrapperStyle={{
+						marginTop: 20,
+						flex: 1,
+						justifyContent: 'space-around',
+						alignItems: 'flex-start',
+					}}
+					numColumns={2}
+					data={searchTerm !== '' ? filteredOutfits : outfits}
+					renderItem={({ item }) => (
+						<ClothingCard
+							item={item}
+							onPress={() => {
+								// navigation.navigate('TabNavigator', {
+								// 	screen: 'create',
+								// });
+							}}
+							onDelete={(item) => {
+								doDelete(item);
+							}}
+							key={item.id}
+						/>
+					)}
+					keyExtractor={(item) => item.id}
+					ListFooterComponent={
+						<View>
+							<TouchableOpacity
+								style={{
+									flex: 1,
+									marginTop: 20,
+									justifyContent: 'center',
+									alignItems: 'center',
+								}}
+							>
+								<View
+									style={{
+										flex: 1,
+										width: 120,
+										height: 120,
+										aspectRatio: 1,
+										borderRadius: 10,
+										backgroundColor: '#d9d9d9',
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<AntDesign
+										name='pluscircleo'
+										size={34}
+										color='#444'
+									/>
+								</View>
+							</TouchableOpacity>
+						</View>
+					}
+				/>
+			)}
 			{/* <Button
 				title='Save & close'
 				onPress={() => console.log('pressed')}

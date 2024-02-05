@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, SafeAreaView, Text, StyleProp, ViewStyle } from 'react-native';
-import Button from './button';
+import Button from './custom-button';
 import DateTimePicker, {
 	DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';

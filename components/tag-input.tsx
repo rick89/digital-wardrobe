@@ -128,7 +128,7 @@ export default function TagInput({
 									marginLeft: 16,
 								}}
 								name='checkmark-circle'
-								size={24}
+								size={20}
 								color='white'
 							/>
 						</View>
