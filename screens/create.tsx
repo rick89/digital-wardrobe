@@ -24,7 +24,7 @@ export default function CreateScreen() {
 	const [dateTime, setDateTime] = useState<Date>(new Date());
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const [tagInputText, setTagInputText] = useState<string>('');
-	const tags = useClothingSelector((state) => state.clothing.tags);
+	const tags = useClothingSelector((state) => state.tags);
 	const [uploadedImageUris, setUploadedImageUris] = useState<string[]>([]);
 
 	const clearFormData = () => {

@@ -9,7 +9,7 @@ export type TagFilterProps = {
 };
 
 export default function TagFilterDropdown({ onChange }: TagFilterProps) {
-	const tags = useClothingSelector((state) => state.clothing.tags);
+	const tags = useClothingSelector((state) => state.tags);
 	const [selectedItems, setSelectedItems] = useState<Tag[]>([]);
 
 	console.log('selectedItems', selectedItems);

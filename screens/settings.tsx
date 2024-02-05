@@ -8,10 +8,10 @@ import { useClothingDispatch } from '../store/hooks';
 import { deleteTag, saveTag } from '../store/slices/clothing-slice';
 
 export default function SettingsScreen() {
-	const tags = useClothingSelector((state) => state.clothing.tags);
+	const tags = useClothingSelector((state) => state.tags);
 	const [tagInputText, setTagInputText] = useState<string>('');
 	const dispatch = useClothingDispatch();
-
+	console.log('tags', tags);
 	const onSave = (tag: Tag) => {
 		if ('new' in tag) {
 			dispatch(saveTag(tag));

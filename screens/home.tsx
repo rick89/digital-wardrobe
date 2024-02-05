@@ -28,8 +28,9 @@ export default function HomeScreen() {
 	const navigation = useNavigation();
 	// @Todo in theory you should not be able to create an outfit without having created a clothing item first
 	// so the null check can happen on this object only! Write a test for this.
+
 	const clothes = useClothingSelector(
-		(state) => state.clothing.individualClothingItems
+		(state) => state.individualClothingItems
 	);
 
 	console.log('CLOTHES', clothes);
