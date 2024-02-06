@@ -20,6 +20,7 @@ export type TagInputProps = {
 	selectedTags?: Tag[] | undefined;
 	style?: StyleProp<ViewStyle>;
 	onChangeText: (inputText: string) => void;
+	clearInput: () => void;
 	inputText: string;
 	isTagEditor?: boolean;
 	onDelete?: (tag: Tag) => void;
@@ -34,12 +35,22 @@ export default function TagInput({
 	inputText,
 	isTagEditor = false,
 	onDelete,
+	clearInput,
 }: TagInputProps) {
 	const filteredTags = tags.filter((tag) => {
 		return tag.title.includes(inputText);
 	});
 	const inputTextIsNotSavedAsATag =
 		!tags.find((tag) => tag.title === inputText) && inputText !== '';
+
+	filteredTags.map((tag) => {
+		selectedTags?.map((s) => {
+			if (tag.id === s.id) {
+				console.log('tag selcted', tag);
+			}
+		});
+		console.log('included? ', selectedTags?.includes(tag), tag);
+	});
 
 	const newTag = (title: string) => {
 		const newTag: Tag = {
@@ -58,7 +69,7 @@ export default function TagInput({
 		}
 		console.log('proper inside');
 		newTag(inputText);
-		onChangeText('');
+		clearInput();
 	};
 
 	return (
@@ -83,8 +94,7 @@ export default function TagInput({
 					<TouchableOpacity
 						style={{ marginLeft: 'auto', marginRight: 6 }}
 						onPress={() => {
-							newTag(inputText);
-							onChangeText('');
+							onSubmitEditing();
 						}}
 					>
 						<AntDesign name='pluscircle' size={24} color='green' />
@@ -107,8 +117,10 @@ export default function TagInput({
 					marginTop: 2,
 				}}
 			>
-				{filteredTags.map((tag) => {
-					return selectedTags && selectedTags.includes(tag) ? (
+				{filteredTags.map((filteredTag) => {
+					return selectedTags?.find(
+						(selectedTag) => selectedTag.id === filteredTag.id
+					) ? (
 						<View
 							style={{
 								backgroundColor: 'green',
@@ -120,9 +132,11 @@ export default function TagInput({
 								flexDirection: 'row',
 								alignItems: 'center',
 							}}
-							key={tag.id}
+							key={filteredTag.id}
 						>
-							<Text style={{ color: 'white' }}>{tag.title}</Text>
+							<Text style={{ color: 'white' }}>
+								{filteredTag.title}
+							</Text>
 							<Ionicons
 								style={{
 									marginLeft: 16,
@@ -136,8 +150,8 @@ export default function TagInput({
 						<TouchableOpacity
 							onPress={() =>
 								!isTagEditor
-									? selectedTag(tag)
-									: onDelete && onDelete(tag)
+									? selectedTag(filteredTag)
+									: onDelete && onDelete(filteredTag)
 							}
 							style={{
 								backgroundColor: 'black',
@@ -149,10 +163,10 @@ export default function TagInput({
 								flexDirection: 'row',
 								alignItems: 'center',
 							}}
-							key={tag.id}
+							key={filteredTag.id}
 						>
 							<Text style={{ color: 'white', marginRight: 10 }}>
-								{tag.title}
+								{filteredTag.title}
 							</Text>
 							{isTagEditor ? (
 								<FontAwesome

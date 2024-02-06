@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Text, View, Image } from 'react-native';
+import { Text, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
@@ -23,12 +23,12 @@ export default function CreateScreen() {
 	const dispatch = useClothingDispatch();
 	const [clothingItemName, setClothingItemName] = useState<string>('');
 	const [selectedClothingTags, setSelectedClothingTags] = useState<Tag[]>([]);
-	const [clothingDateTime, setClothingDateTime] = useState<DateTime>(
-		DateTime.now()
+	const [clothingDateTime, setClothingDateTime] = useState<DateTime | null>(
+		null
 	);
 	const [outfitItemName, setOutfitItemName] = useState<string>('');
 	const [selectedOutfitTags, setSelectedOutfitTags] = useState<Tag[]>([]);
-	const [outfitDateTime, setOutfitDateTime] = useState<DateTime>(
+	const [outfitDateTime, setOutfitDateTime] = useState<DateTime | null>(
 		DateTime.now()
 	);
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
@@ -39,6 +39,10 @@ export default function CreateScreen() {
 	const [uploadedClothingImageUris, setUploadedClothingImageUris] = useState<
 		string[]
 	>([]);
+	const [showOutfitDateTimePicker, setShowOutfitDateTimePicker] =
+		useState<boolean>(false);
+	const [showClothingDateTimePicker, setShowClothingDateTimePicker] =
+		useState<boolean>(false);
 
 	const clearFormData = () => {
 		if (selectedTab === 'clothing') {
@@ -71,7 +75,7 @@ export default function CreateScreen() {
 			type: selectedTab,
 			title: clothingItemName,
 			images: uploadedClothingImageUris,
-			date: clothingDateTime.toISO(),
+			date: clothingDateTime ? clothingDateTime.toISO() : null,
 			tags: selectedClothingTags,
 		};
 		if (selectedTab === 'outfit') {
@@ -80,7 +84,7 @@ export default function CreateScreen() {
 				type: selectedTab,
 				title: outfitItemName,
 				images: [],
-				date: outfitDateTime.toISO(),
+				date: outfitDateTime ? outfitDateTime.toISO() : null,
 				tags: selectedOutfitTags,
 			};
 		}
@@ -97,16 +101,34 @@ export default function CreateScreen() {
 
 	const doSelectedClothingTag = (tag: Tag) => {
 		if ('new' in tag && tag.new) {
+			console.log('is new clothing tag');
 			dispatch(saveTag(tag));
 		}
+		console.log('select the clothing tag');
 		setSelectedClothingTags([...selectedClothingTags, tag]);
 	};
 
 	const doSelectedOutfitTag = (tag: Tag) => {
 		if ('new' in tag && tag.new) {
+			console.log('is new outfit tag');
 			dispatch(saveTag(tag));
 		}
+		console.log('select the tag', tag);
 		setSelectedOutfitTags([...selectedOutfitTags, tag]);
+	};
+
+	const toggleOutfitDateTimePicker = () => {
+		if (showOutfitDateTimePicker) {
+			setOutfitDateTime(null);
+		}
+		setShowOutfitDateTimePicker(!showOutfitDateTimePicker);
+	};
+
+	const toggleClothingDateTimePicker = () => {
+		if (showClothingDateTimePicker) {
+			setClothingDateTime(null);
+		}
+		setShowClothingDateTimePicker(!showClothingDateTimePicker);
 	};
 
 	return (
@@ -128,20 +150,38 @@ export default function CreateScreen() {
 							onChangeText={(tagInputText) =>
 								setClothingTagInputText(tagInputText)
 							}
+							clearInput={() => setClothingTagInputText('')}
 							inputText={clothingTagInputText}
 							selectedTags={selectedClothingTags}
 							tags={tags}
 							selectedTag={(tag) => doSelectedClothingTag(tag)}
 							style={{ marginBottom: 20 }}
 						/>
-						<CustomDateTimePicker
-							selectedDateTime={(dateTime) =>
-								setClothingDateTime(
-									DateTime.fromJSDate(dateTime)
-								)
-							}
-							style={{ marginBottom: 20 }}
-						/>
+						<TouchableOpacity
+							onPress={() => {
+								toggleClothingDateTimePicker();
+							}}
+						>
+							<Text
+								style={{
+									...styles.calendarLink,
+								}}
+							>
+								{showClothingDateTimePicker
+									? 'Hide'
+									: 'Add to calendar'}
+							</Text>
+						</TouchableOpacity>
+						{showClothingDateTimePicker ? (
+							<CustomDateTimePicker
+								selectedDateTime={(dateTime) =>
+									setClothingDateTime(
+										DateTime.fromJSDate(dateTime)
+									)
+								}
+								style={{ marginBottom: 20 }}
+							/>
+						) : null}
 					</View>
 				) : (
 					<View>
@@ -152,21 +192,44 @@ export default function CreateScreen() {
 							style={{ marginBottom: 20 }}
 						/>
 						<TagInput
+							clearInput={() => setOutfitTagInputText('')}
 							onChangeText={(outfitTagInputText) =>
 								setOutfitTagInputText(outfitTagInputText)
 							}
 							inputText={outfitTagInputText}
 							selectedTags={selectedOutfitTags}
 							tags={tags}
-							selectedTag={(tag) => doSelectedOutfitTag(tag)}
+							selectedTag={(tag) => {
+								console.log('selectedTag', tag);
+								doSelectedOutfitTag(tag);
+							}}
 							style={{ marginBottom: 20 }}
 						/>
-						<CustomDateTimePicker
-							selectedDateTime={(dateTime) =>
-								setOutfitDateTime(DateTime.fromJSDate(dateTime))
-							}
-							style={{ marginBottom: 20 }}
-						/>
+						<TouchableOpacity
+							onPress={() => {
+								toggleOutfitDateTimePicker();
+							}}
+						>
+							<Text
+								style={{
+									...styles.calendarLink,
+								}}
+							>
+								{showOutfitDateTimePicker
+									? 'Hide'
+									: 'Add to calendar'}
+							</Text>
+						</TouchableOpacity>
+						{showOutfitDateTimePicker ? (
+							<CustomDateTimePicker
+								selectedDateTime={(dateTime) =>
+									setOutfitDateTime(
+										DateTime.fromJSDate(dateTime)
+									)
+								}
+								style={{ marginBottom: 20 }}
+							/>
+						) : null}
 					</View>
 				)}
 				{selectedTab === 'clothing' ? (
@@ -227,3 +290,11 @@ export default function CreateScreen() {
 		</ScreenWrapper>
 	);
 }
+
+const styles = StyleSheet.create({
+	calendarLink: {
+		marginBottom: 20,
+		color: '#42a4f5',
+		textDecorationLine: 'underline',
+	},
+});
