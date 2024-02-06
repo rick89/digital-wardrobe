@@ -1,61 +1,76 @@
 import { type ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import ScreenWrapper from '../components/screen-wrapper';
 import { useClothingSelector } from '../store/hooks';
 import { DateTime } from 'luxon';
 import { ClothingItem } from '../store/slices/clothing-slice';
 import MonthCard from '../components/month-card';
+import { objectIsEmpty } from '../utils/helpers';
 
 export default function UpcomingScreen() {
 	const allClothing = useClothingSelector(
 		(state) => state.individualClothingItems
 	);
 
-	const groupByDate = (allClothing: ClothingItem[]) => {
-		return allClothing.reduce((months, note) => {
-			if (!note.date) {
+	const filteredClothing = allClothing.filter((item) => {
+		return item.date;
+	});
+
+	filteredClothing.sort((a, b) => {
+		return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
+	});
+
+	const groupByDate = (filteredClothing: ClothingItem[]) => {
+		return filteredClothing.reduce((months, item) => {
+			if (!item.date) {
 				console.error('note.date is undefined');
 			} else {
-				const date = DateTime.fromISO(note.date).toFormat('MMMM');
+				const date = DateTime.fromISO(item.date).toFormat('MMMM');
 				if (!months.hasOwnProperty(date)) {
 					months[date] = [];
 				}
-				months[date].push(note);
+				months[date].push(item);
 				return months;
 			}
 		}, {});
 	};
 
-	const grouped = groupByDate(allClothing);
-
-	console.log('GROUPED', typeof grouped);
-	console.log('GROUPED', grouped);
-	console.log('Object.keys(grouped)', Object.keys(grouped));
-
-	console.log('grouped["February"]', grouped['February']);
+	const grouped = groupByDate(filteredClothing);
 
 	Object.keys(grouped).forEach((value, index, array) => {
-		// console.log('value', value);
-		// console.log('index', index);
-		// console.log('array', JSON.stringify(array));
 		array.map((objectKey) => {
-			grouped[objectKey].map((a, b) => {
-				// console.log('a', a);
-				// console.log('b', b);
-			});
+			grouped[objectKey].map((a, b) => {});
 		});
 	});
 
-	// Object.keys(items[0]).forEach((key, index) => {
-	// 	console.log('items[key]', JSON.stringify(items[key]));
-	// 	console.log('index', index);
-	// });
+	if (objectIsEmpty(grouped)) {
+		return (
+			<View
+				style={{
+					alignItems: 'center',
+					justifyContent: 'center',
+					flex: 1,
+				}}
+			>
+				<Text>You have nothing in your calendar.</Text>
+			</View>
+		);
+	}
 
 	return (
 		<ScreenWrapper>
-			{Object.keys(grouped).map((month) => {
-				return <MonthCard month={month} items={grouped[month]} />;
-			})}
+			<ScrollView>
+				{Object.keys(grouped).map((month) => {
+					let clothingItem: ClothingItem[] = grouped[month];
+					return (
+						<MonthCard
+							key={month}
+							month={month}
+							items={clothingItem}
+						/>
+					);
+				})}
+			</ScrollView>
 		</ScreenWrapper>
 	);
 }

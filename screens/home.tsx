@@ -47,6 +47,11 @@ export default function HomeScreen() {
 	const clothes = allClothing.filter((item) => item.type === 'clothing');
 	const outfits = allClothing.filter((item) => item.type === 'outfit');
 
+	allClothing.map((c) => {
+		console.log('title: ', c.title);
+		c.tags.map((tag) => console.log('tag', tag));
+	});
+
 	useEffect(() => {
 		if (searchTerm !== '') {
 			console.log('we are searching');

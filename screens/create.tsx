@@ -3,7 +3,7 @@ import { Text, View, Image } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
-import { Tag } from '../store/slices/clothing-slice';
+import { ClothingItem, Outfit, Tag } from '../store/slices/clothing-slice';
 import { useClothingDispatch } from '../store/hooks';
 import Button from '../components/custom-button.tsx';
 import { saveClothing } from '../store/slices/clothing-slice';
@@ -22,30 +22,71 @@ export default function CreateScreen() {
 	const navigation = useNavigation();
 	const dispatch = useClothingDispatch();
 	const [clothingItemName, setClothingItemName] = useState<string>('');
-	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-	const [dateTime, setDateTime] = useState<DateTime>(DateTime.now());
+	const [selectedClothingTags, setSelectedClothingTags] = useState<Tag[]>([]);
+	const [clothingDateTime, setClothingDateTime] = useState<DateTime>(
+		DateTime.now()
+	);
+	const [outfitItemName, setOutfitItemName] = useState<string>('');
+	const [selectedOutfitTags, setSelectedOutfitTags] = useState<Tag[]>([]);
+	const [outfitDateTime, setOutfitDateTime] = useState<DateTime>(
+		DateTime.now()
+	);
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
-	const [tagInputText, setTagInputText] = useState<string>('');
+	const [outfitTagInputText, setOutfitTagInputText] = useState<string>('');
+	const [clothingTagInputText, setClothingTagInputText] =
+		useState<string>('');
 	const tags = useClothingSelector((state) => state.tags);
-	const [uploadedImageUris, setUploadedImageUris] = useState<string[]>([]);
+	const [uploadedClothingImageUris, setUploadedClothingImageUris] = useState<
+		string[]
+	>([]);
 
 	const clearFormData = () => {
-		setClothingItemName('');
-		setSelectedTags([]);
-		setDateTime(DateTime.now());
-		setTagInputText('');
-		setUploadedImageUris([]);
+		if (selectedTab === 'clothing') {
+			setClothingItemName('');
+			setSelectedClothingTags([]);
+			setClothingDateTime(DateTime.now());
+			setClothingTagInputText('');
+			setUploadedClothingImageUris([]);
+		} else {
+			setOutfitItemName('');
+			setSelectedOutfitTags([]);
+			setOutfitDateTime(DateTime.now());
+			setOutfitTagInputText('');
+			// setUploadedOutfitImageUris([]);
+		}
+	};
+
+	const isDisabled = () => {
+		if (selectedTab === 'clothing') {
+			return clothingItemName === '';
+		} else {
+			return outfitItemName === '';
+		}
 	};
 
 	const saveClothingItem = () => {
+		let objectForStore: ClothingItem | Outfit;
+		objectForStore = {
+			id: uniqueId(),
+			type: selectedTab,
+			title: clothingItemName,
+			images: uploadedClothingImageUris,
+			date: clothingDateTime.toISO(),
+			tags: selectedClothingTags,
+		};
+		if (selectedTab === 'outfit') {
+			objectForStore = {
+				id: uniqueId(),
+				type: selectedTab,
+				title: outfitItemName,
+				images: [],
+				date: outfitDateTime.toISO(),
+				tags: selectedOutfitTags,
+			};
+		}
 		dispatch(
 			saveClothing({
-				id: uniqueId(),
-				title: clothingItemName,
-				images: uploadedImageUris,
-				date: dateTime.toISO(),
-				tags: selectedTags,
-				type: selectedTab,
+				...objectForStore,
 			})
 		);
 		clearFormData();
@@ -54,11 +95,18 @@ export default function CreateScreen() {
 		navigation.navigate('Home');
 	};
 
-	const doSelectedTag = (tag: Tag) => {
+	const doSelectedClothingTag = (tag: Tag) => {
 		if ('new' in tag && tag.new) {
 			dispatch(saveTag(tag));
 		}
-		setSelectedTags([...selectedTags, tag]);
+		setSelectedClothingTags([...selectedClothingTags, tag]);
+	};
+
+	const doSelectedOutfitTag = (tag: Tag) => {
+		if ('new' in tag && tag.new) {
+			dispatch(saveTag(tag));
+		}
+		setSelectedOutfitTags([...selectedOutfitTags, tag]);
 	};
 
 	return (
@@ -68,34 +116,65 @@ export default function CreateScreen() {
 				selectedTab={selectedTab}
 			/>
 			<View style={{ flexGrow: 1 }}>
-				<Input
-					value={clothingItemName}
-					placeholder='Name'
-					onChangeText={(name) => setClothingItemName(name)}
-					style={{ marginBottom: 20 }}
-				/>
-				<TagInput
-					onChangeText={(tagInputText) =>
-						setTagInputText(tagInputText)
-					}
-					inputText={tagInputText}
-					selectedTags={selectedTags}
-					tags={tags}
-					selectedTag={(tag) => doSelectedTag(tag)}
-					style={{ marginBottom: 20 }}
-				/>
-				<CustomDateTimePicker
-					selectedDateTime={(dateTime) =>
-						setDateTime(DateTime.fromJSDate(dateTime))
-					}
-					style={{ marginBottom: 20 }}
-				/>
+				{selectedTab === 'clothing' ? (
+					<View>
+						<Input
+							value={clothingItemName}
+							placeholder='Name'
+							onChangeText={(name) => setClothingItemName(name)}
+							style={{ marginBottom: 20 }}
+						/>
+						<TagInput
+							onChangeText={(tagInputText) =>
+								setClothingTagInputText(tagInputText)
+							}
+							inputText={clothingTagInputText}
+							selectedTags={selectedClothingTags}
+							tags={tags}
+							selectedTag={(tag) => doSelectedClothingTag(tag)}
+							style={{ marginBottom: 20 }}
+						/>
+						<CustomDateTimePicker
+							selectedDateTime={(dateTime) =>
+								setClothingDateTime(
+									DateTime.fromJSDate(dateTime)
+								)
+							}
+							style={{ marginBottom: 20 }}
+						/>
+					</View>
+				) : (
+					<View>
+						<Input
+							value={outfitItemName}
+							placeholder='Name'
+							onChangeText={(name) => setOutfitItemName(name)}
+							style={{ marginBottom: 20 }}
+						/>
+						<TagInput
+							onChangeText={(outfitTagInputText) =>
+								setOutfitTagInputText(outfitTagInputText)
+							}
+							inputText={outfitTagInputText}
+							selectedTags={selectedOutfitTags}
+							tags={tags}
+							selectedTag={(tag) => doSelectedOutfitTag(tag)}
+							style={{ marginBottom: 20 }}
+						/>
+						<CustomDateTimePicker
+							selectedDateTime={(dateTime) =>
+								setOutfitDateTime(DateTime.fromJSDate(dateTime))
+							}
+							style={{ marginBottom: 20 }}
+						/>
+					</View>
+				)}
 				{selectedTab === 'clothing' ? (
 					<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 						<ImageUpload
 							uploadedImage={(uri) =>
-								setUploadedImageUris([
-									...uploadedImageUris,
+								setUploadedClothingImageUris([
+									...uploadedClothingImageUris,
 									uri,
 								])
 							}
@@ -117,7 +196,7 @@ export default function CreateScreen() {
 								/>
 							</View>
 						</ImageUpload>
-						{uploadedImageUris.map((uri) => (
+						{uploadedClothingImageUris.map((uri) => (
 							<Image
 								key={uri}
 								style={{
@@ -140,7 +219,11 @@ export default function CreateScreen() {
 					</View>
 				)}
 			</View>
-			<CustomButton title='Save' onPress={() => saveClothingItem()} />
+			<CustomButton
+				disabled={isDisabled()}
+				title='Save'
+				onPress={() => saveClothingItem()}
+			/>
 		</ScreenWrapper>
 	);
 }

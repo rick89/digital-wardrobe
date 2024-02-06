@@ -3,3 +3,7 @@ export const uniqueId = () => {
 	const randomness = Math.random().toString(36).substr(2);
 	return dateString + randomness;
 };
+
+export const objectIsEmpty = (obj: {}) => {
+	return Object.keys(obj).length === 0;
+};
