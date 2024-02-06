@@ -36,6 +36,7 @@ export default function SettingsScreen() {
 					Tag editor
 				</Text>
 				<TagInput
+					clearInput={() => setTagInputText('')}
 					selectedTag={(tag) => onSave(tag)}
 					onChangeText={(tagInputText) =>
 						setTagInputText(tagInputText)
