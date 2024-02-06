@@ -4,68 +4,57 @@ import ScreenWrapper from '../components/screen-wrapper';
 import { useClothingSelector } from '../store/hooks';
 import { DateTime } from 'luxon';
 import { ClothingItem } from '../store/slices/clothing-slice';
+import MonthCard from '../components/month-card';
 
 export default function UpcomingScreen() {
 	const allClothing = useClothingSelector(
 		(state) => state.individualClothingItems
 	);
 
-	let clothingSortedByDate = allClothing.sort((a: ClothingItem, b) => {
-		console.log('a.date', a.date);
-		console.log('tyepof ', typeof a.date);
-		return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
-	});
-	// https://stackoverflow.com/questions/71912724/react-separate-array-of-timestamps-into-days
-	let obj = [];
-	clothingSortedByDate.map((item) => {
-		if (!item.date) {
-			return;
-		}
-		let monthAsString = DateTime.fromISO(item.date).toFormat('MMMM');
-		console.log('month', monthAsString);
-		obj[monthAsString] = [];
-		obj[monthAsString].push(item);
-		console.log('item', item);
-	});
+	const groupByDate = (allClothing: ClothingItem[]) => {
+		return allClothing.reduce((months, note) => {
+			if (!note.date) {
+				console.error('note.date is undefined');
+			} else {
+				const date = DateTime.fromISO(note.date).toFormat('MMMM');
+				if (!months.hasOwnProperty(date)) {
+					months[date] = [];
+				}
+				months[date].push(note);
+				return months;
+			}
+		}, {});
+	};
 
-	let upcomingClothingItems = [];
-	upcomingClothingItems.push(obj);
+	const grouped = groupByDate(allClothing);
 
-	console.log('upcoming', upcomingClothingItems);
-	console.log('------------------------------------------------------------');
-	// allClothing.map((item) => {
-	// 	if (!item.date) {
-	// 		return;
-	// 	}
-	// 	console.log('date ', typeof DateTime.fromISO(item.date));
-	// });
-	upcomingClothingItems.map((month, index) => {
-		console.log(Object.keys(month));
-		month.map((clothing, index) => {
-			console.log(clothing);
+	console.log('GROUPED', typeof grouped);
+	console.log('GROUPED', grouped);
+	console.log('Object.keys(grouped)', Object.keys(grouped));
+
+	console.log('grouped["February"]', grouped['February']);
+
+	Object.keys(grouped).forEach((value, index, array) => {
+		// console.log('value', value);
+		// console.log('index', index);
+		// console.log('array', JSON.stringify(array));
+		array.map((objectKey) => {
+			grouped[objectKey].map((a, b) => {
+				// console.log('a', a);
+				// console.log('b', b);
+			});
 		});
 	});
 
+	// Object.keys(items[0]).forEach((key, index) => {
+	// 	console.log('items[key]', JSON.stringify(items[key]));
+	// 	console.log('index', index);
+	// });
+
 	return (
 		<ScreenWrapper>
-			{upcomingClothingItems.map((month, index) => {
-				return (
-					<View>
-						<View style={{ flexDirection: 'column' }}>
-							<Text>{Object.keys(month)}</Text>
-						</View>
-						<View>
-							<Text>{month.length}</Text>
-							{month.map((clothing, index) => {
-								return (
-									<Text style={{ backgroundColor: 'red' }}>
-										{clothing.title + index} abc
-									</Text>
-								);
-							})}
-						</View>
-					</View>
-				);
+			{Object.keys(grouped).map((month) => {
+				return <MonthCard month={month} items={grouped[month]} />;
 			})}
 		</ScreenWrapper>
 	);
