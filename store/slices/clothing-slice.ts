@@ -1,9 +1,10 @@
-// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ImageObject } from '../../components/image-upload';
 
 export type ClothingItem = {
 	id: string;
 	title: string;
-	images: string[];
+	images: ImageObject[];
 	date: string | null;
 	tags: Tag[];
 	type: string;
@@ -12,7 +13,7 @@ export type ClothingItem = {
 export type Outfit = {
 	id: string;
 	title: string;
-	images: string[];
+	images: ImageObject[];
 	clothes: ClothingItem[];
 	date: Date;
 	tags: Tag[];
@@ -43,48 +44,6 @@ const initialState: ClothingItemState = {
 	tags: [],
 	text: [],
 };
-
-// export const clothingSlice = createSlice({
-// 	name: 'clothing-item',
-// 	initialState,
-// 	reducers: {
-// 		saveClothing(state, action: PayloadAction<ClothingItem>) {
-// 			state.individualClothingItems.push({
-// 				...action.payload,
-// 			});
-// 		},
-// 		saveTag(state, action: PayloadAction<Tag>) {
-// 			state.tags.push({
-// 				...action.payload,
-// 			});
-// 			const itemIndex = state.tags.findIndex((item) => {
-// 				return item.id === action.payload.id;
-// 			});
-// 			state.tags[itemIndex].new = false;
-// 		},
-// 		deleteClothing(state, action: PayloadAction<string>) {
-// 			const itemIndex = state.individualClothingItems.findIndex(
-// 				(item) => {
-// 					return item.id === action.payload;
-// 				}
-// 			);
-// 			state.individualClothingItems.splice(itemIndex, 1);
-// 		},
-// 		deleteTag(state, action: PayloadAction<string>) {
-// 			const itemIndex = state.tags.findIndex((item) => {
-// 				return item.id === action.payload;
-// 			});
-// 			state.tags.splice(itemIndex, 1);
-// 		},
-// 	},
-// });
-
-// export default clothingSlice;
-
-// export const { saveClothing, saveTag, deleteClothing, deleteTag } =
-// 	clothingSlice.actions;
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export const testSlice = createSlice({
 	name: 'test-slice',
@@ -118,9 +77,27 @@ export const testSlice = createSlice({
 			});
 			state.tags.splice(itemIndex, 1);
 		},
+		removeClothingItemFromCalendar(state, action: PayloadAction<string>) {
+			const clothingItem = state.individualClothingItems.find(
+				(item) => item.id === action.payload
+			);
+			if (!clothingItem) {
+				console.error(
+					'could not find clothing item to remove from calendar with id: ',
+					action.payload
+				);
+				return;
+			}
+			clothingItem.date = null;
+		},
 	},
 });
 
 export default testSlice;
-export const { saveClothing, saveTag, deleteClothing, deleteTag } =
-	testSlice.actions;
+export const {
+	saveClothing,
+	saveTag,
+	deleteClothing,
+	deleteTag,
+	removeClothingItemFromCalendar,
+} = testSlice.actions;

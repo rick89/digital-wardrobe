@@ -1,13 +1,18 @@
 import { type ReactNode } from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, Alert } from 'react-native';
 import ScreenWrapper from '../components/screen-wrapper';
 import { useClothingSelector } from '../store/hooks';
 import { DateTime } from 'luxon';
-import { ClothingItem } from '../store/slices/clothing-slice';
+import {
+	ClothingItem,
+	removeClothingItemFromCalendar,
+} from '../store/slices/clothing-slice';
 import MonthCard from '../components/month-card';
 import { groupByDate, objectIsEmpty } from '../utils/helpers';
+import { useClothingDispatch } from '../store/hooks';
 
 export default function UpcomingScreen() {
+	const dispatch = useClothingDispatch();
 	const allClothing = useClothingSelector(
 		(state) => state.individualClothingItems
 	);
@@ -42,6 +47,28 @@ export default function UpcomingScreen() {
 		);
 	}
 
+	const onDelete = (clothingItem: ClothingItem) => {
+		console.log('clothingItem', clothingItem);
+		Alert.alert(
+			'Delete',
+			`Are you sure you want to delete ${clothingItem[0].title}`,
+			[
+				{
+					text: 'Cancel',
+					onPress: () => console.log('Cancel Pressed'),
+					style: 'cancel',
+				},
+				{
+					text: 'OK',
+					onPress: () =>
+						dispatch(
+							removeClothingItemFromCalendar(clothingItem[0].id)
+						),
+				},
+			]
+		);
+	};
+
 	return (
 		<ScreenWrapper>
 			<ScrollView>
@@ -49,6 +76,7 @@ export default function UpcomingScreen() {
 					let clothingItem: ClothingItem[] = grouped[month];
 					return (
 						<MonthCard
+							onDelete={(id) => onDelete(clothingItem)}
 							key={month}
 							month={month}
 							items={clothingItem}

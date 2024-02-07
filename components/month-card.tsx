@@ -1,16 +1,18 @@
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { ClothingItem } from '../store/slices/clothing-slice';
 import { DateTime } from 'luxon';
+import { FontAwesome } from '@expo/vector-icons';
 
 type MonthCardProps = {
 	month: string;
 	items: ClothingItem[];
+	onDelete: (clothingItem: ClothingItem) => void;
 };
 const blurhash =
 	'|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-export default function MonthCard({ month, items }: MonthCardProps) {
+export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 	return (
 		<View
 			style={{
@@ -30,6 +32,21 @@ export default function MonthCard({ month, items }: MonthCardProps) {
 						borderRadius: 10,
 					}}
 				>
+					<TouchableOpacity
+						onPress={() => onDelete(item)}
+						style={{
+							position: 'absolute',
+							right: 0,
+							zIndex: 100,
+							top: 0,
+							paddingVertical: 2,
+							paddingHorizontal: 4,
+							borderRadius: 10,
+							backgroundColor: 'white',
+						}}
+					>
+						<FontAwesome name='trash-o' size={24} color='black' />
+					</TouchableOpacity>
 					<View>
 						<Text style={{ fontSize: 20 }}>{item.title}</Text>
 						<Text style={{ marginTop: 'auto' }}>

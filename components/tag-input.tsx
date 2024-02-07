@@ -49,7 +49,6 @@ export default function TagInput({
 				console.log('tag selcted', tag);
 			}
 		});
-		console.log('included? ', selectedTags?.includes(tag), tag);
 	});
 
 	const newTag = (title: string) => {

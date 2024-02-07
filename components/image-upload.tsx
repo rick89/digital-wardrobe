@@ -1,10 +1,16 @@
 import { type ReactNode } from 'react';
 import { TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { uniqueId } from '../utils/helpers';
+
+export type ImageObject = {
+	id: string;
+	uri: string;
+};
 
 export type ImageUploadProps = {
 	children: ReactNode;
-	uploadedImage: (uri: string) => void;
+	uploadedImage: (uri: ImageObject) => void;
 };
 
 export default function ImageUpload({
@@ -22,7 +28,11 @@ export default function ImageUpload({
 		console.log(result);
 
 		if (!result.canceled) {
-			uploadedImage(result.assets[0].uri);
+			const imageObject: ImageObject = {
+				id: uniqueId(),
+				uri: result.assets[0].uri,
+			};
+			uploadedImage(imageObject);
 		}
 	};
 

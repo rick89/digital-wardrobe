@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Text, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+	Text,
+	View,
+	Image,
+	ScrollView,
+	TouchableOpacity,
+	StyleSheet,
+} from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
@@ -13,10 +20,13 @@ import { saveTag } from '../store/slices/clothing-slice';
 import CustomDateTimePicker from '../components/custom-date-time-picker.tsx';
 import { useClothingSelector } from '../store/hooks';
 import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav.tsx';
-import ImageUpload from '../components/image-upload.tsx';
+import ImageUpload, { ImageObject } from '../components/image-upload.tsx';
 import { AntDesign } from '@expo/vector-icons';
 import { DateTime } from 'luxon';
 import CustomButton from '../components/custom-button.tsx';
+import { FontAwesome } from '@expo/vector-icons';
+import { deleteUploadedClothingImage } from '../store/slices/clothing-slice';
+import Toast from '../components/toast.tsx';
 
 export default function CreateScreen() {
 	const navigation = useNavigation();
@@ -36,8 +46,8 @@ export default function CreateScreen() {
 	const [clothingTagInputText, setClothingTagInputText] =
 		useState<string>('');
 	const tags = useClothingSelector((state) => state.tags);
-	const [uploadedClothingImageUris, setUploadedClothingImageUris] = useState<
-		string[]
+	const [uploadedClothingImages, setUploadedClothingImages] = useState<
+		ImageObject[]
 	>([]);
 	const [showOutfitDateTimePicker, setShowOutfitDateTimePicker] =
 		useState<boolean>(false);
@@ -48,14 +58,16 @@ export default function CreateScreen() {
 		if (selectedTab === 'clothing') {
 			setClothingItemName('');
 			setSelectedClothingTags([]);
-			setClothingDateTime(DateTime.now());
+			setClothingDateTime(null);
 			setClothingTagInputText('');
-			setUploadedClothingImageUris([]);
+			setUploadedClothingImages([]);
+			setShowClothingDateTimePicker(false);
 		} else {
 			setOutfitItemName('');
 			setSelectedOutfitTags([]);
-			setOutfitDateTime(DateTime.now());
+			setOutfitDateTime(null);
 			setOutfitTagInputText('');
+			setShowOutfitDateTimePicker(false);
 			// setUploadedOutfitImageUris([]);
 		}
 	};
@@ -74,7 +86,7 @@ export default function CreateScreen() {
 			id: uniqueId(),
 			type: selectedTab,
 			title: clothingItemName,
-			images: uploadedClothingImageUris,
+			images: uploadedClothingImages,
 			date: clothingDateTime ? clothingDateTime.toISO() : null,
 			tags: selectedClothingTags,
 		};
@@ -117,18 +129,22 @@ export default function CreateScreen() {
 		setSelectedOutfitTags([...selectedOutfitTags, tag]);
 	};
 
-	const toggleOutfitDateTimePicker = () => {
-		if (showOutfitDateTimePicker) {
+	const toggleOutfitDateTimePicker = () => {};
+
+	const toggleDateTimePicker = (type: string) => {
+		if (type === 'clothing') {
+			setClothingDateTime(null);
+			setShowClothingDateTimePicker(!showClothingDateTimePicker);
+		} else {
 			setOutfitDateTime(null);
+			setShowOutfitDateTimePicker(!showOutfitDateTimePicker);
 		}
-		setShowOutfitDateTimePicker(!showOutfitDateTimePicker);
 	};
 
-	const toggleClothingDateTimePicker = () => {
-		if (showClothingDateTimePicker) {
-			setClothingDateTime(null);
-		}
-		setShowClothingDateTimePicker(!showClothingDateTimePicker);
+	const onDeleteUploadedClothingImage = (id: string) => {
+		setUploadedClothingImages(
+			uploadedClothingImages.filter((image) => image.id !== id)
+		);
 	};
 
 	return (
@@ -137,7 +153,7 @@ export default function CreateScreen() {
 				onPress={(selectedTab) => setSelectedTab(selectedTab)}
 				selectedTab={selectedTab}
 			/>
-			<View style={{ flexGrow: 1 }}>
+			<ScrollView style={{ flexGrow: 1 }}>
 				{selectedTab === 'clothing' ? (
 					<View>
 						<Input
@@ -157,21 +173,27 @@ export default function CreateScreen() {
 							selectedTag={(tag) => doSelectedClothingTag(tag)}
 							style={{ marginBottom: 20 }}
 						/>
-						<TouchableOpacity
-							onPress={() => {
-								toggleClothingDateTimePicker();
+						<View
+							style={{
+								...styles.calendarLinkContainer,
 							}}
 						>
-							<Text
-								style={{
-									...styles.calendarLink,
+							<TouchableOpacity
+								onPress={() => {
+									toggleDateTimePicker('clothing');
 								}}
 							>
-								{showClothingDateTimePicker
-									? 'Hide'
-									: 'Add to calendar'}
-							</Text>
-						</TouchableOpacity>
+								<Text
+									style={{
+										...styles.calendarLink,
+									}}
+								>
+									{showClothingDateTimePicker
+										? 'Cancel'
+										: 'Add to calendar'}
+								</Text>
+							</TouchableOpacity>
+						</View>
 						{showClothingDateTimePicker ? (
 							<CustomDateTimePicker
 								selectedDateTime={(dateTime) =>
@@ -205,21 +227,31 @@ export default function CreateScreen() {
 							}}
 							style={{ marginBottom: 20 }}
 						/>
-						<TouchableOpacity
-							onPress={() => {
-								toggleOutfitDateTimePicker();
+						<View
+							style={{
+								...styles.calendarLinkContainer,
 							}}
 						>
-							<Text
+							<TouchableOpacity
+								onPress={() => {
+									toggleOutfitDateTimePicker();
+								}}
 								style={{
-									...styles.calendarLink,
+									...styles.calendarLinkContainer,
 								}}
 							>
-								{showOutfitDateTimePicker
-									? 'Hide'
-									: 'Add to calendar'}
-							</Text>
-						</TouchableOpacity>
+								<Text
+									style={{
+										...styles.calendarLink,
+									}}
+								>
+									{showOutfitDateTimePicker
+										? 'Cancel'
+										: 'Add to calendar'}
+								</Text>
+							</TouchableOpacity>
+						</View>
+
 						{showOutfitDateTimePicker ? (
 							<CustomDateTimePicker
 								selectedDateTime={(dateTime) =>
@@ -235,10 +267,10 @@ export default function CreateScreen() {
 				{selectedTab === 'clothing' ? (
 					<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
 						<ImageUpload
-							uploadedImage={(uri) =>
-								setUploadedClothingImageUris([
-									...uploadedClothingImageUris,
-									uri,
+							uploadedImage={(uploadedImageObject) =>
+								setUploadedClothingImages([
+									...uploadedClothingImages,
+									uploadedImageObject,
 								])
 							}
 						>
@@ -259,16 +291,39 @@ export default function CreateScreen() {
 								/>
 							</View>
 						</ImageUpload>
-						{uploadedClothingImageUris.map((uri) => (
-							<Image
-								key={uri}
-								style={{
-									width: 100,
-									height: 100,
-									borderRadius: 10,
-								}}
-								source={{ uri: uri }}
-							/>
+						{uploadedClothingImages.map((image) => (
+							<View>
+								<TouchableOpacity
+									onPress={() =>
+										onDeleteUploadedClothingImage(image.id)
+									}
+									style={{
+										position: 'absolute',
+										right: 0,
+										zIndex: 100,
+										top: 0,
+										paddingVertical: 2,
+										paddingHorizontal: 4,
+										borderRadius: 10,
+										backgroundColor: 'white',
+									}}
+								>
+									<FontAwesome
+										name='trash-o'
+										size={24}
+										color='black'
+									/>
+								</TouchableOpacity>
+								<Image
+									key={image.id}
+									style={{
+										width: 100,
+										height: 100,
+										borderRadius: 10,
+									}}
+									source={{ uri: image.uri }}
+								/>
+							</View>
 						))}
 					</View>
 				) : (
@@ -281,12 +336,13 @@ export default function CreateScreen() {
 						</View>
 					</View>
 				)}
-			</View>
+			</ScrollView>
 			<CustomButton
 				disabled={isDisabled()}
 				title='Save'
 				onPress={() => saveClothingItem()}
 			/>
+			<Toast />
 		</ScreenWrapper>
 	);
 }
@@ -296,5 +352,8 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		color: '#42a4f5',
 		textDecorationLine: 'underline',
+	},
+	calendarLinkContainer: {
+		flexWrap: 'wrap',
 	},
 });
