@@ -22,16 +22,11 @@ export default function UpcomingScreen() {
 	});
 
 	filteredClothing.sort((a, b) => {
+		// @ToDo sort this
 		return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
 	});
 
 	const grouped = groupByDate(filteredClothing);
-
-	Object.keys(grouped).forEach((value, index, array) => {
-		array.map((objectKey) => {
-			grouped[objectKey].map((a, b) => {});
-		});
-	});
 
 	if (objectIsEmpty(grouped)) {
 		return (
@@ -47,7 +42,7 @@ export default function UpcomingScreen() {
 		);
 	}
 
-	const onDelete = (clothingItem: ClothingItem) => {
+	const onDelete = (clothingItem: ClothingItem[]) => {
 		console.log('clothingItem', clothingItem);
 		Alert.alert(
 			'Delete',

@@ -37,7 +37,10 @@ export default function HomeScreen() {
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filteredClothes, setFilteredClothes] = useState<ClothingItem[]>([]);
 	const [filteredOutfits, setFilteredOutfits] = useState<ClothingItem[]>([]);
-	const tags = useClothingSelector((state) => state.tags);
+	const clothingTags = useClothingSelector((state) => state.tags).filter(
+		(tag) => tag.type === 'clothing'
+	);
+	console.log('clothingTags', clothingTags);
 	const dispatch = useClothingDispatch();
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const navigation = useNavigation();
@@ -51,25 +54,32 @@ export default function HomeScreen() {
 		console.log('title: ', c.title);
 		c.tags.map((tag) => console.log('tag', tag));
 	});
+	console.log('CLOTHING', clothes);
 
 	useEffect(() => {
+		let filteredClothesResult: ClothingItem[];
+		let filteredOutfitsResult: ClothingItem[];
 		if (searchTerm !== '') {
-			console.log('we are searching');
 			if (selectedTab === 'clothing') {
-				console.log('we are searching clothes', clothes);
-				let filteredClothes = clothes.filter((item) =>
+				filteredClothesResult = clothes.filter((item) =>
 					item.title.toLowerCase().includes(searchTerm.toLowerCase())
 				);
-				setFilteredClothes(filteredClothes);
-				console.log('we have searched clothes', filteredClothes);
+				setFilteredClothes(filteredClothesResult);
 			} else {
-				console.log('we are searching outfits');
-				let filteredOutfits = outfits.filter((item) =>
+				filteredOutfitsResult = outfits.filter((item) =>
 					item.title.toLowerCase().includes(searchTerm.toLowerCase())
 				);
-				setFilteredOutfits(filteredOutfits);
+				setFilteredOutfits(filteredOutfitsResult);
 			}
 		}
+		// if (selectedTab === 'clothing') {
+		// 	filteredClothesResult = filteredClothes.filter((item) =>
+		// 		item.tags.map((tag) => {
+		// 			return selectedTags.includes(tag);
+		// 		})
+		// 	);
+		// 	setFilteredClothes(filteredClothesResult);
+		// }
 	}, [searchTerm]);
 
 	const doDelete = (item: ClothingItem | Outfit) => {
@@ -85,15 +95,16 @@ export default function HomeScreen() {
 
 	const toggleTagSelection = (tag: Tag) => {
 		if (selectedTags.includes(tag)) {
-			const itemIndex = selectedTags.findIndex((item) => {
-				return item.id === tag.id;
-			});
-			const filteredTags = selectedTags.splice(itemIndex, 1);
+			const filteredTags = selectedTags.filter(
+				(item) => item.id !== tag.id
+			);
 			setSelectedTags(filteredTags);
 		} else {
 			setSelectedTags([...selectedTags, tag]);
 		}
 	};
+
+	const filterClothes = () => {};
 
 	if (allClothing.length === 0) {
 		return (
@@ -137,7 +148,7 @@ export default function HomeScreen() {
 					<TagFilter
 						selectedTags={selectedTags}
 						onPress={(tag) => toggleTagSelection(tag)}
-						tags={tags}
+						tags={clothingTags}
 					/>
 				</ScrollView>
 			</View>
@@ -163,7 +174,7 @@ export default function HomeScreen() {
 							item={item}
 							onPress={() => {
 								// navigation.navigate('TabNavigator', {
-								// 	screen: 'create',
+								//  screen: 'create',
 								// });
 							}}
 							onDelete={(item) => {
@@ -221,7 +232,7 @@ export default function HomeScreen() {
 							item={item}
 							onPress={() => {
 								// navigation.navigate('TabNavigator', {
-								// 	screen: 'create',
+								//  screen: 'create',
 								// });
 							}}
 							onDelete={(item) => {
@@ -265,53 +276,53 @@ export default function HomeScreen() {
 				/>
 			)}
 			{/* <Button
-				title='Save & close'
-				onPress={() => console.log('pressed')}
-			/> */}
+                title='Save & close'
+                onPress={() => console.log('pressed')}
+            /> */}
 			{/* <Toast /> */}
 			{/* <Input onChangeText={(text) => console.log('text', text)} /> */}
 			{/* <SearchInput
-				onChangeText={(searchTerm) => console.log(searchTerm)}
-			/> */}
+                onChangeText={(searchTerm) => console.log(searchTerm)}
+            /> */}
 			{/* <CustomDateTimePicker /> */}
 			{/* <FilterDropdown onChange={(items) => console.log('ITEMS', items)} /> */}
 			{/* <ClothingCard
-				item={{
-					id: 'abc',
-					title: 'tee shirt froma ll saints that I love very much so so',
-					images: ['', ''],
-					date: new Date(),
-					tags: [
-						{
-							id: '123',
-							name: 'winter',
-							type: 'clothing',
-						},
-					],
-				}}
-				onPress={(type, item) =>
-					console.log('navigate', type, 'item', item)
-				}
-				onDelete={(id) => {
-					console.log('delete', id);
-				}}
-			/> */}
+                item={{
+                    id: 'abc',
+                    title: 'tee shirt froma ll saints that I love very much so so',
+                    images: ['', ''],
+                    date: new Date(),
+                    tags: [
+                        {
+                            id: '123',
+                            name: 'winter',
+                            type: 'clothing',
+                        },
+                    ],
+                }}
+                onPress={(type, item) =>
+                    console.log('navigate', type, 'item', item)
+                }
+                onDelete={(id) => {
+                    console.log('delete', id);
+                }}
+            /> */}
 			{/* <TagInput
-				addTag={(tag) => console.log('addTag', tag)}
-				onPress={(tagName) => console.log('tagName', tagName)}
-			/> */}
+                addTag={(tag) => console.log('addTag', tag)}
+                onPress={(tagName) => console.log('tagName', tagName)}
+            /> */}
 			{/* <ImageUpload>
-				<View
-					style={{
-						width: 40,
-						height: 40,
-						borderWidth: 1,
-						borderRadius: 10,
-					}}
-				>
-					<Text style={{ textAlign: 'center', fontSize: 28 }}>+</Text>
-				</View>
-			</ImageUpload> */}
+                <View
+                    style={{
+                        width: 40,
+                        height: 40,
+                        borderWidth: 1,
+                        borderRadius: 10,
+                    }}
+                >
+                    <Text style={{ textAlign: 'center', fontSize: 28 }}>+</Text>
+                </View>
+            </ImageUpload> */}
 		</ScreenWrapper>
 	);
 }

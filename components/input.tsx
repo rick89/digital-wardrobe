@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import {
 	NativeSyntheticEvent,
 	StyleProp,
@@ -12,6 +13,7 @@ export type TextInputProps = {
 	onSubmitEditing?: () => void;
 	value: string;
 	style?: StyleProp<ViewStyle>;
+	focus?: boolean;
 };
 
 export default function Input({
@@ -20,9 +22,22 @@ export default function Input({
 	onChangeText,
 	onSubmitEditing,
 	style,
+	focus,
 }: TextInputProps) {
+	const inputRef = useRef<TextInput>(null);
+
+	useEffect(() => {
+		if (!inputRef.current) {
+			return;
+		}
+		if (focus) {
+			inputRef.current.focus();
+		}
+	}, []);
+
 	return (
 		<TextInput
+			ref={inputRef}
 			value={value}
 			autoCorrect={false}
 			onSubmitEditing={onSubmitEditing}

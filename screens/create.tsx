@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 	StyleSheet,
+	TextInput,
 } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
@@ -25,7 +26,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { DateTime } from 'luxon';
 import CustomButton from '../components/custom-button.tsx';
 import { FontAwesome } from '@expo/vector-icons';
-import { deleteUploadedClothingImage } from '../store/slices/clothing-slice';
 import Toast from '../components/toast.tsx';
 
 export default function CreateScreen() {
@@ -53,6 +53,7 @@ export default function CreateScreen() {
 		useState<boolean>(false);
 	const [showClothingDateTimePicker, setShowClothingDateTimePicker] =
 		useState<boolean>(false);
+	const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
 	const clearFormData = () => {
 		if (selectedTab === 'clothing') {
@@ -105,10 +106,10 @@ export default function CreateScreen() {
 				...objectForStore,
 			})
 		);
+
+		setSaveSuccess(true);
+
 		clearFormData();
-		// @ToDo type all routes
-		// @ts-ignore
-		navigation.navigate('Home');
 	};
 
 	const doSelectedClothingTag = (tag: Tag) => {
@@ -157,6 +158,7 @@ export default function CreateScreen() {
 				{selectedTab === 'clothing' ? (
 					<View>
 						<Input
+							focus={true}
 							value={clothingItemName}
 							placeholder='Name'
 							onChangeText={(name) => setClothingItemName(name)}
@@ -342,7 +344,7 @@ export default function CreateScreen() {
 				title='Save'
 				onPress={() => saveClothingItem()}
 			/>
-			<Toast />
+			{saveSuccess && <Toast />}
 		</ScreenWrapper>
 	);
 }

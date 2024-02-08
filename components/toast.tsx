@@ -25,13 +25,18 @@ export default function Toast({
 	return (
 		<View
 			style={{
+				position: 'absolute',
+				left: '25%',
+				right: '25%',
+				bottom: 0,
+				justifyContent: 'center',
+				alignItems: 'center',
 				backgroundColor: type === 'error' ? '#de2828' : '#44d446',
 				flexDirection: 'row',
 				width: 200,
 				height: 40,
 				borderRadius: 20,
 				paddingHorizontal: 15,
-				alignItems: 'center',
 			}}
 		>
 			<Text style={{ color: 'white' }}>{text}</Text>
