@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ImageObject } from '../../components/image-upload';
-
+import { DateTime } from 'luxon';
 export type ClothingItem = {
 	id: string;
 	title: string;
@@ -8,6 +8,7 @@ export type ClothingItem = {
 	date: string | null;
 	tags: Tag[];
 	type: string;
+	created: string;
 };
 
 export type Outfit = {
@@ -52,6 +53,7 @@ export const testSlice = createSlice({
 		saveClothing(state, action: PayloadAction<ClothingItem>) {
 			state.individualClothingItems.push({
 				...action.payload,
+				created: DateTime.now().toISO(),
 			});
 		},
 		deleteClothing(state, action: PayloadAction<string>) {

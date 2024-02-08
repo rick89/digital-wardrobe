@@ -44,8 +44,11 @@ export default function HomeScreen() {
 	const dispatch = useClothingDispatch();
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const navigation = useNavigation();
-	const allClothing = useClothingSelector(
-		(state) => state.individualClothingItems
+	const allClothing = useClothingSelector((state) =>
+		state.individualClothingItems
+			.sort((a, b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date))
+			.slice()
+			.reverse()
 	);
 	const clothes = allClothing.filter((item) => item.type === 'clothing');
 	const outfits = allClothing.filter((item) => item.type === 'outfit');
@@ -54,7 +57,6 @@ export default function HomeScreen() {
 		console.log('title: ', c.title);
 		c.tags.map((tag) => console.log('tag', tag));
 	});
-	console.log('CLOTHING', clothes);
 
 	useEffect(() => {
 		let filteredClothesResult: ClothingItem[];
