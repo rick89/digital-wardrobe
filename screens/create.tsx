@@ -161,7 +161,10 @@ export default function CreateScreen() {
 							focus={true}
 							value={clothingItemName}
 							placeholder='Name'
-							onChangeText={(name) => setClothingItemName(name)}
+							onChangeText={(name) => {
+								setClothingItemName(name);
+								setSaveSuccess(false);
+							}}
 							style={{ marginBottom: 20 }}
 						/>
 						<TagInput

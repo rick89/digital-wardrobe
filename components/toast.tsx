@@ -11,6 +11,7 @@ export default function Toast({
 	text = 'Saved!',
 	type = 'success',
 }: ToastProps) {
+	console.log(text);
 	const [isVisible, setIsVisible] = useState<boolean>(true);
 	const secondsToDisplayUntilHidden = 10;
 
