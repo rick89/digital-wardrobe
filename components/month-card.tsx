@@ -42,17 +42,19 @@ export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 							paddingVertical: 2,
 							paddingHorizontal: 4,
 							borderRadius: 10,
-							backgroundColor: 'white',
+							backgroundColor: 'black',
 						}}
 					>
-						<FontAwesome name='trash-o' size={24} color='black' />
+						<FontAwesome name='trash-o' size={24} color='red' />
 					</TouchableOpacity>
-					<View>
-						<Text style={{ fontSize: 20 }}>{item.title}</Text>
-						<Text style={{ marginTop: 'auto' }}>
-							{DateTime.fromISO(item.date).toFormat('DDDD')}
-						</Text>
-					</View>
+					{item.date && (
+						<View>
+							<Text style={{ fontSize: 20 }}>{item.title}</Text>
+							<Text style={{ marginTop: 'auto' }}>
+								{DateTime.fromISO(item.date).toFormat('DDDD')}
+							</Text>
+						</View>
+					)}
 					<Image
 						style={{
 							height: 100,
@@ -61,7 +63,7 @@ export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 							marginLeft: 'auto',
 						}}
 						source={{
-							uri: item.images[0],
+							uri: item.images[0].uri,
 						}}
 						placeholder={blurhash}
 					/>

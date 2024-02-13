@@ -44,9 +44,13 @@ export default function HomeScreen() {
 	const dispatch = useClothingDispatch();
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const navigation = useNavigation();
-	const allClothing = useClothingSelector((state) =>
+	let allClothing = useClothingSelector((state) =>
 		state.individualClothingItems
-			.sort((a, b) => DateTime.fromISO(a.date) - DateTime.fromISO(b.date))
+			.sort(
+				(a, b) =>
+					//@ts-ignore
+					DateTime.fromISO(a.created) - DateTime.fromISO(b.created)
+			)
 			.slice()
 			.reverse()
 	);

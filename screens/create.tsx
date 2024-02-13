@@ -90,6 +90,7 @@ export default function CreateScreen() {
 			images: uploadedClothingImages,
 			date: clothingDateTime ? clothingDateTime.toISO() : null,
 			tags: selectedClothingTags,
+			created: DateTime.now().toISO(),
 		};
 		if (selectedTab === 'outfit') {
 			objectForStore = {
@@ -99,6 +100,7 @@ export default function CreateScreen() {
 				images: [],
 				date: outfitDateTime ? outfitDateTime.toISO() : null,
 				tags: selectedOutfitTags,
+				created: DateTime.now().toISO(),
 			};
 		}
 		dispatch(

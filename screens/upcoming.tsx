@@ -22,7 +22,7 @@ export default function UpcomingScreen() {
 	});
 
 	filteredClothing.sort((a, b) => {
-		// @ToDo sort this
+		//@ts-ignore
 		return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
 	});
 
