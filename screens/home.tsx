@@ -6,6 +6,7 @@ import {
 	Alert,
 	ScrollView,
 	TouchableOpacity,
+	ListRenderItem,
 } from 'react-native';
 import Button from '../components/custom-button';
 import ScreenWrapper from '../components/screen-wrapper';
@@ -133,6 +134,25 @@ export default function HomeScreen() {
 		);
 	}
 
+	const Item = ({ item }: { item: ClothingItem }) => (
+		<ClothingCard
+			item={item}
+			onPress={() => {
+				// navigation.navigate('TabNavigator', {
+				//  screen: 'create',
+				// });
+			}}
+			onDelete={(item) => {
+				doDelete(item);
+			}}
+			key={item.id}
+		/>
+	);
+
+	const renderItem: ListRenderItem<ClothingItem> = ({ item }) => (
+		<Item item={item} />
+	);
+
 	return (
 		<ScreenWrapper>
 			<View
@@ -175,21 +195,8 @@ export default function HomeScreen() {
 					}}
 					numColumns={2}
 					data={searchTerm !== '' ? filteredClothes : clothes}
-					renderItem={({ item }) => (
-						<ClothingCard
-							item={item}
-							onPress={() => {
-								// navigation.navigate('TabNavigator', {
-								//  screen: 'create',
-								// });
-							}}
-							onDelete={(item) => {
-								doDelete(item);
-							}}
-							key={item.id}
-						/>
-					)}
-					keyExtractor={(item) => item.id}
+					renderItem={renderItem}
+					keyExtractor={(item: ClothingItem) => item.id}
 					extraData={clothes}
 					ListFooterComponent={
 						<View>
