@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "name": "garms",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
@@ -37,4 +38,52 @@
     "typescript": "^5.1.3"
   },
   "private": true
+=======
+	"name": "garms",
+	"version": "1.0.0",
+	"main": "node_modules/expo/AppEntry.js",
+	"scripts": {
+		"start": "expo start",
+		"android": "expo start --android",
+		"ios": "expo start --ios",
+		"web": "expo start --web",
+		"test": ""
+	},
+	"dependencies": {
+		"@react-native-async-storage/async-storage": "1.21.0",
+		"@react-native-community/datetimepicker": "7.6.1",
+		"@react-navigation/bottom-tabs": "^6.5.11",
+		"@react-navigation/native": "^6.1.9",
+		"@react-navigation/native-stack": "^6.9.17",
+		"@reduxjs/toolkit": "^2.1.0",
+		"expo": "^50.0.8",
+		"expo-dropdown-multiselect": "^0.1.0",
+		"expo-image": "^1.10.6",
+		"expo-image-picker": "~14.7.1",
+		"expo-status-bar": "~1.11.1",
+		"luxon": "^3.4.4",
+		"react": "18.2.0",
+		"react-dom": "^18.2.0",
+		"react-native": "^0.73.4",
+		"react-native-vector-icons": "^10.0.3",
+		"react-redux": "^9.1.0",
+		"redux-persist": "^6.0.0",
+		"styled-components": "^6.1.8"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.20.0",
+		"@types/luxon": "^3.4.2",
+		"@types/react": "~18.2.45",
+		"@types/react-dom": "^18.0.10",
+		"@typescript-eslint/eslint-plugin": "^6.21.0",
+		"eslint": "^8.57.0",
+		"eslint-config-standard-with-typescript": "^43.0.1",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-n": "^16.6.2",
+		"eslint-plugin-promise": "^6.1.1",
+		"eslint-plugin-react": "^7.33.2",
+		"typescript": "^5.3.3"
+	},
+	"private": true
+>>>>>>> Stashed changes
 }

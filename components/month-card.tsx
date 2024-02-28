@@ -13,6 +13,7 @@ const blurhash =
 	'|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
+	console.log('items', items);
 	return (
 		<View
 			style={{
@@ -63,7 +64,10 @@ export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 							marginLeft: 'auto',
 						}}
 						source={{
-							uri: item.images[0].uri,
+							uri:
+								item.images.length > 0
+									? item.images[0].uri
+									: blurhash,
 						}}
 						placeholder={blurhash}
 					/>

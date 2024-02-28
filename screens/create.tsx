@@ -6,14 +6,12 @@ import {
 	ScrollView,
 	TouchableOpacity,
 	StyleSheet,
-	TextInput,
 } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
 import { ClothingItem, Outfit, Tag } from '../store/slices/clothing-slice';
 import { useClothingDispatch } from '../store/hooks';
-import Button from '../components/custom-button.tsx';
 import { saveClothing } from '../store/slices/clothing-slice';
 import { useNavigation } from '@react-navigation/native';
 import { uniqueId } from '../utils/helpers.ts';
@@ -82,8 +80,8 @@ export default function CreateScreen() {
 	};
 
 	const saveClothingItem = () => {
-		let objectForStore: ClothingItem | Outfit;
-		objectForStore = {
+		let itemToSave: ClothingItem | Outfit;
+		itemToSave = {
 			id: uniqueId(),
 			type: selectedTab,
 			title: clothingItemName,
@@ -93,7 +91,7 @@ export default function CreateScreen() {
 			created: DateTime.now().toISO(),
 		};
 		if (selectedTab === 'outfit') {
-			objectForStore = {
+			itemToSave = {
 				id: uniqueId(),
 				type: selectedTab,
 				title: outfitItemName,
@@ -105,7 +103,7 @@ export default function CreateScreen() {
 		}
 		dispatch(
 			saveClothing({
-				...objectForStore,
+				...itemToSave,
 			})
 		);
 

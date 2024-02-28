@@ -17,14 +17,11 @@ export default function UpcomingScreen() {
 		(state) => state.individualClothingItems
 	);
 
-	const filteredClothing = allClothing.filter((item) => {
-		return item.date;
-	});
-
-	filteredClothing.sort((a, b) => {
-		//@ts-ignore
-		return DateTime.fromISO(a.date) - DateTime.fromISO(b.date);
-	});
+	let filteredClothing = allClothing
+		.filter((item) => {
+			return item.date;
+		})
+		.sort((a, b) => (a.created < b.created ? 1 : -1));
 
 	const grouped = groupByDate(filteredClothing);
 

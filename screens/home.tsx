@@ -8,16 +8,10 @@ import {
 	TouchableOpacity,
 	ListRenderItem,
 } from 'react-native';
-import Button from '../components/custom-button';
 import ScreenWrapper from '../components/screen-wrapper';
-import Toast from '../components/toast';
-import Input from '../components/input';
 import SearchInput from '../components/search-input';
-import CustomDateTimePicker from '../components/custom-date-time-picker';
-import FilterDropdown from '../components/filter-dropdown';
 import ClothingCard from '../components/clothing-card';
 import TagFilter from '../components/tag-filter';
-import ImageUpload from '../components/image-upload';
 import { useClothingSelector } from '../store/hooks';
 import { useClothingDispatch } from '../store/hooks';
 import { AntDesign } from '@expo/vector-icons';
@@ -30,7 +24,6 @@ import {
 } from '../store/slices/clothing-slice';
 import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav';
 import { useNavigation } from '@react-navigation/native';
-import { DateTime } from 'luxon';
 
 export default function HomeScreen() {
 	const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
@@ -41,20 +34,13 @@ export default function HomeScreen() {
 	const clothingTags = useClothingSelector((state) => state.tags).filter(
 		(tag) => tag.type === 'clothing'
 	);
-	console.log('clothingTags', clothingTags);
 	const dispatch = useClothingDispatch();
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
-	const navigation = useNavigation();
-	let allClothing = useClothingSelector((state) =>
-		state.individualClothingItems
-			.sort(
-				(a, b) =>
-					//@ts-ignore
-					DateTime.fromISO(a.created) - DateTime.fromISO(b.created)
-			)
-			.slice()
-			.reverse()
-	);
+
+	let allClothing = useClothingSelector((state) => {
+		return state.individualClothingItems;
+	}).sort((a, b) => (a.created > b.created ? -1 : 1));
+
 	const clothes = allClothing.filter((item) => item.type === 'clothing');
 	const outfits = allClothing.filter((item) => item.type === 'outfit');
 
@@ -79,14 +65,6 @@ export default function HomeScreen() {
 				setFilteredOutfits(filteredOutfitsResult);
 			}
 		}
-		// if (selectedTab === 'clothing') {
-		// 	filteredClothesResult = filteredClothes.filter((item) =>
-		// 		item.tags.map((tag) => {
-		// 			return selectedTags.includes(tag);
-		// 		})
-		// 	);
-		// 	setFilteredClothes(filteredClothesResult);
-		// }
 	}, [searchTerm]);
 
 	const doDelete = (item: ClothingItem | Outfit) => {
@@ -288,54 +266,6 @@ export default function HomeScreen() {
 					}
 				/>
 			)}
-			{/* <Button
-                title='Save & close'
-                onPress={() => console.log('pressed')}
-            /> */}
-			{/* <Toast /> */}
-			{/* <Input onChangeText={(text) => console.log('text', text)} /> */}
-			{/* <SearchInput
-                onChangeText={(searchTerm) => console.log(searchTerm)}
-            /> */}
-			{/* <CustomDateTimePicker /> */}
-			{/* <FilterDropdown onChange={(items) => console.log('ITEMS', items)} /> */}
-			{/* <ClothingCard
-                item={{
-                    id: 'abc',
-                    title: 'tee shirt froma ll saints that I love very much so so',
-                    images: ['', ''],
-                    date: new Date(),
-                    tags: [
-                        {
-                            id: '123',
-                            name: 'winter',
-                            type: 'clothing',
-                        },
-                    ],
-                }}
-                onPress={(type, item) =>
-                    console.log('navigate', type, 'item', item)
-                }
-                onDelete={(id) => {
-                    console.log('delete', id);
-                }}
-            /> */}
-			{/* <TagInput
-                addTag={(tag) => console.log('addTag', tag)}
-                onPress={(tagName) => console.log('tagName', tagName)}
-            /> */}
-			{/* <ImageUpload>
-                <View
-                    style={{
-                        width: 40,
-                        height: 40,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                    }}
-                >
-                    <Text style={{ textAlign: 'center', fontSize: 28 }}>+</Text>
-                </View>
-            </ImageUpload> */}
 		</ScreenWrapper>
 	);
 }
