@@ -283,6 +283,7 @@ export default function CreateScreen() {
 								style={{
 									width: 100,
 									height: 100,
+									marginRight: 8,
 									borderRadius: 10,
 									alignItems: 'center',
 									justifyContent: 'center',
@@ -297,7 +298,7 @@ export default function CreateScreen() {
 							</View>
 						</ImageUpload>
 						{uploadedClothingImages.map((image) => (
-							<View>
+							<View key={image.id} style={{ marginRight: 8 }}>
 								<TouchableOpacity
 									onPress={() =>
 										onDeleteUploadedClothingImage(image.id)

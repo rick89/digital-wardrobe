@@ -1,4 +1,4 @@
-import { ClothingItem } from '../store/slices/clothing-slice';
+import { ClothingItem, Outfit } from '../store/slices/clothing-slice';
 import { DateTime } from 'luxon';
 
 export const uniqueId = () => {
@@ -25,4 +25,8 @@ export const groupByDate = (filteredClothing: ClothingItem[]): any => {
 			return months;
 		}
 	}, {});
+};
+
+export const isOutfit = (item: ClothingItem | Outfit): item is Outfit => {
+	return 'clothes' in item;
 };

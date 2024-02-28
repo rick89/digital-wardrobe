@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Dimensions, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { FontAwesome } from '@expo/vector-icons';
 import { ClothingItem, Outfit } from '../store/slices/clothing-slice';
+import { isOutfit } from '../utils/helpers';
 
 export type ClothingCardProps = {
 	onPress: (type: string, id: string) => void;
@@ -19,13 +20,11 @@ export default function ClothingCard({
 	item,
 }: ClothingCardProps) {
 	let type: 'clothingItem' | 'outfit' = 'clothingItem';
-	const title = item.title;
 	const images: string[] = [];
-	if ('clothes' in item) {
-		// item is an outfit
+	if (isOutfit(item)) {
 		type = 'outfit';
 		item.clothes.map((item) => {
-			item.images.map((image) => images.push(image));
+			item.images.map((image) => images.push(image.uri));
 		});
 	} else {
 		// item is an individual clothing item
@@ -50,7 +49,12 @@ export default function ClothingCard({
 						aspectRatio: 1,
 						borderRadius: 10,
 					}}
-					source={{ uri: item.images[0] }}
+					source={{
+						uri:
+							item.images.length > 0
+								? item.images[0].uri
+								: blurhash,
+					}}
 					placeholder={blurhash}
 					contentFit='cover'
 					transition={1000}

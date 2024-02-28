@@ -39,7 +39,9 @@ export default function HomeScreen() {
 
 	let allClothing = useClothingSelector((state) => {
 		return state.individualClothingItems;
-	}).sort((a, b) => (a.created > b.created ? -1 : 1));
+	})
+		.slice()
+		.sort((a, b) => (a.created > b.created ? -1 : 1));
 
 	const clothes = allClothing.filter((item) => item.type === 'clothing');
 	const outfits = allClothing.filter((item) => item.type === 'outfit');
@@ -169,44 +171,14 @@ export default function HomeScreen() {
 					columnWrapperStyle={{
 						marginTop: 20,
 						flex: 1,
-						justifyContent: 'space-around',
+						alignItems: 'flex-start',
+						justifyContent: 'center',
 					}}
 					numColumns={2}
 					data={searchTerm !== '' ? filteredClothes : clothes}
 					renderItem={renderItem}
 					keyExtractor={(item: ClothingItem) => item.id}
 					extraData={clothes}
-					ListFooterComponent={
-						<View>
-							<TouchableOpacity
-								style={{
-									flex: 1,
-									marginTop: 20,
-									justifyContent: 'center',
-									alignItems: 'center',
-								}}
-							>
-								<View
-									style={{
-										flex: 1,
-										width: 120,
-										height: 120,
-										aspectRatio: 1,
-										borderRadius: 10,
-										backgroundColor: '#d9d9d9',
-										alignItems: 'center',
-										justifyContent: 'center',
-									}}
-								>
-									<AntDesign
-										name='pluscircleo'
-										size={34}
-										color='#444'
-									/>
-								</View>
-							</TouchableOpacity>
-						</View>
-					}
 				/>
 			) : (
 				<FlatList
@@ -218,52 +190,8 @@ export default function HomeScreen() {
 					}}
 					numColumns={2}
 					data={searchTerm !== '' ? filteredOutfits : outfits}
-					renderItem={({ item }) => (
-						<ClothingCard
-							item={item}
-							onPress={() => {
-								// navigation.navigate('TabNavigator', {
-								//  screen: 'create',
-								// });
-							}}
-							onDelete={(item) => {
-								doDelete(item);
-							}}
-							key={item.id}
-						/>
-					)}
+					renderItem={renderItem}
 					keyExtractor={(item) => item.id}
-					ListFooterComponent={
-						<View>
-							<TouchableOpacity
-								style={{
-									flex: 1,
-									marginTop: 20,
-									justifyContent: 'center',
-									alignItems: 'center',
-								}}
-							>
-								<View
-									style={{
-										flex: 1,
-										width: 120,
-										height: 120,
-										aspectRatio: 1,
-										borderRadius: 10,
-										backgroundColor: '#d9d9d9',
-										alignItems: 'center',
-										justifyContent: 'center',
-									}}
-								>
-									<AntDesign
-										name='pluscircleo'
-										size={34}
-										color='#444'
-									/>
-								</View>
-							</TouchableOpacity>
-						</View>
-					}
 				/>
 			)}
 		</ScreenWrapper>
