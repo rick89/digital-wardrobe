@@ -13,7 +13,7 @@ export const objectIsEmpty = (obj: {}) => {
 
 // @Tod REMOVE ANY we need a new type to represent the object being returned, type that can be indexe by a string
 export const groupByDate = (filteredClothing: ClothingItem[]): any => {
-	return filteredClothing.reduce((months, item) => {
+	return filteredClothing.reduce((months: any, item) => {
 		if (!item.date) {
 			console.error('note.date is undefined');
 		} else {

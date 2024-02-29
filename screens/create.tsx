@@ -36,9 +36,7 @@ export default function CreateScreen() {
 	);
 	const [outfitItemName, setOutfitItemName] = useState<string>('');
 	const [selectedOutfitTags, setSelectedOutfitTags] = useState<Tag[]>([]);
-	const [outfitDateTime, setOutfitDateTime] = useState<DateTime | null>(
-		DateTime.now()
-	);
+	const [outfitDateTime, setOutfitDateTime] = useState<DateTime | null>(null);
 	const [selectedTab, setSelectedTab] = useState<string>('clothing');
 	const [outfitTagInputText, setOutfitTagInputText] = useState<string>('');
 	const [clothingTagInputText, setClothingTagInputText] =
@@ -71,7 +69,7 @@ export default function CreateScreen() {
 		}
 	};
 
-	const isDisabled = () => {
+	const saveIsDisabled = () => {
 		if (selectedTab === 'clothing') {
 			return clothingItemName === '';
 		} else {
@@ -106,13 +104,11 @@ export default function CreateScreen() {
 				...itemToSave,
 			})
 		);
-
 		setSaveSuccess(true);
-
 		clearFormData();
 	};
 
-	const doSelectedClothingTag = (tag: Tag) => {
+	const handleToggleClothingTagSelection = (tag: Tag) => {
 		if ('new' in tag && tag.new) {
 			console.log('is new clothing tag');
 			dispatch(saveTag(tag));
@@ -121,7 +117,7 @@ export default function CreateScreen() {
 		setSelectedClothingTags([...selectedClothingTags, tag]);
 	};
 
-	const doSelectedOutfitTag = (tag: Tag) => {
+	const handleToggleOutfitTagSelection = (tag: Tag) => {
 		if ('new' in tag && tag.new) {
 			console.log('is new outfit tag');
 			dispatch(saveTag(tag));
@@ -130,14 +126,20 @@ export default function CreateScreen() {
 		setSelectedOutfitTags([...selectedOutfitTags, tag]);
 	};
 
-	const toggleOutfitDateTimePicker = () => {};
-
 	const toggleDateTimePicker = (type: string) => {
 		if (type === 'clothing') {
+			const addToCalendar = !showClothingDateTimePicker;
 			setClothingDateTime(null);
+			if (addToCalendar) {
+				setClothingDateTime(DateTime.now());
+			}
 			setShowClothingDateTimePicker(!showClothingDateTimePicker);
 		} else {
+			const addToCalendar = !showOutfitDateTimePicker;
 			setOutfitDateTime(null);
+			if (addToCalendar) {
+				setOutfitDateTime(DateTime.now());
+			}
 			setShowOutfitDateTimePicker(!showOutfitDateTimePicker);
 		}
 	};
@@ -175,7 +177,9 @@ export default function CreateScreen() {
 							inputText={clothingTagInputText}
 							selectedTags={selectedClothingTags}
 							tags={tags}
-							selectedTag={(tag) => doSelectedClothingTag(tag)}
+							selectedTag={(tag) =>
+								handleToggleClothingTagSelection(tag)
+							}
 							style={{ marginBottom: 20 }}
 						/>
 						<View
@@ -228,7 +232,7 @@ export default function CreateScreen() {
 							tags={tags}
 							selectedTag={(tag) => {
 								console.log('selectedTag', tag);
-								doSelectedOutfitTag(tag);
+								handleToggleOutfitTagSelection(tag);
 							}}
 							style={{ marginBottom: 20 }}
 						/>
@@ -239,7 +243,7 @@ export default function CreateScreen() {
 						>
 							<TouchableOpacity
 								onPress={() => {
-									toggleOutfitDateTimePicker();
+									toggleDateTimePicker('outfit');
 								}}
 								style={{
 									...styles.calendarLinkContainer,
@@ -344,7 +348,7 @@ export default function CreateScreen() {
 				)}
 			</ScrollView>
 			<CustomButton
-				disabled={isDisabled()}
+				disabled={saveIsDisabled()}
 				title='Save'
 				onPress={() => saveClothingItem()}
 			/>
@@ -355,6 +359,7 @@ export default function CreateScreen() {
 
 const styles = StyleSheet.create({
 	calendarLink: {
+		fontWeight: 'bold',
 		marginBottom: 20,
 		color: '#42a4f5',
 		textDecorationLine: 'underline',

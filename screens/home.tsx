@@ -26,7 +26,6 @@ import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav';
 import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
-	const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filteredClothes, setFilteredClothes] = useState<ClothingItem[]>([]);
@@ -45,11 +44,6 @@ export default function HomeScreen() {
 
 	const clothes = allClothing.filter((item) => item.type === 'clothing');
 	const outfits = allClothing.filter((item) => item.type === 'outfit');
-
-	allClothing.map((c) => {
-		console.log('title: ', c.title);
-		c.tags.map((tag) => console.log('tag', tag));
-	});
 
 	useEffect(() => {
 		let filteredClothesResult: ClothingItem[];
@@ -90,8 +84,6 @@ export default function HomeScreen() {
 			setSelectedTags([...selectedTags, tag]);
 		}
 	};
-
-	const filterClothes = () => {};
 
 	if (allClothing.length === 0) {
 		return (
@@ -147,9 +139,18 @@ export default function HomeScreen() {
 						onChangeText={(searchTerm) => setSearchTerm(searchTerm)}
 					/>
 				</View>
+				<Text
+					style={{
+						marginTop: 20,
+						fontWeight: 'bold',
+						marginBottom: 6,
+					}}
+				>
+					Filters:{' '}
+				</Text>
 				<ScrollView
 					horizontal={true}
-					style={{ flexDirection: 'row', marginTop: 20 }}
+					style={{ flexDirection: 'row', marginTop: 0 }}
 				>
 					<TagFilter
 						selectedTags={selectedTags}
@@ -172,13 +173,12 @@ export default function HomeScreen() {
 						marginTop: 20,
 						flex: 1,
 						alignItems: 'flex-start',
-						justifyContent: 'center',
+						justifyContent: 'flex-start',
 					}}
 					numColumns={2}
 					data={searchTerm !== '' ? filteredClothes : clothes}
 					renderItem={renderItem}
 					keyExtractor={(item: ClothingItem) => item.id}
-					extraData={clothes}
 				/>
 			) : (
 				<FlatList

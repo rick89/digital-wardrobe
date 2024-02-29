@@ -55,6 +55,9 @@ export default function TabNavigator() {
 				tabBarActiveTintColor: 'black',
 				tabBarInactiveTintColor: 'gray',
 				tabBarOptions: {
+					style: {
+						height: 100,
+					},
 					labelStyle: {
 						fontSize: 20,
 					},

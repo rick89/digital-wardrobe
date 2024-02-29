@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { FontAwesome } from '@expo/vector-icons';
 import { ClothingItem, Outfit } from '../store/slices/clothing-slice';
 import { isOutfit } from '../utils/helpers';
+import { useRef } from 'react';
 
 export type ClothingCardProps = {
 	onPress: (type: string, id: string) => void;
@@ -21,22 +22,22 @@ export default function ClothingCard({
 }: ClothingCardProps) {
 	let type: 'clothingItem' | 'outfit' = 'clothingItem';
 	const images: string[] = [];
-	if (isOutfit(item)) {
-		type = 'outfit';
-		item.clothes.map((item) => {
-			item.images.map((image) => images.push(image.uri));
-		});
-	} else {
-		// item is an individual clothing item
-		const images = item.images;
-	}
+	let imageUriRef = useRef<string | null>(null);
+
+	console.log('imageUriRef', imageUriRef);
+	console.log('item.images', item.images);
+	// item is an individual clothing item
+	// const image = item.images[0].uri;
+	imageUriRef.current = item.images.length > 0 ? item.images[0].uri : '';
 
 	return (
 		<View>
 			<TouchableOpacity
 				style={{
+					paddingTop: 8,
+					paddingRight: 8,
+					paddingLeft: 8,
 					flex: 1,
-					justifyContent: 'center',
 					alignItems: 'center',
 				}}
 				onPress={() => onPress(type, item.id)}
@@ -45,35 +46,36 @@ export default function ClothingCard({
 					style={{
 						flex: 1,
 						width: windowWidth * 1,
-						height: 120,
+						height: 165,
 						aspectRatio: 1,
 						borderRadius: 10,
 					}}
 					source={{
-						uri:
-							item.images.length > 0
-								? item.images[0].uri
-								: blurhash,
+						uri: imageUriRef.current,
 					}}
 					placeholder={blurhash}
 					contentFit='cover'
 					transition={1000}
 				/>
-				<Text>{item.title}</Text>
+				<View>
+					<Text style={{ fontSize: 16, marginTop: 5 }}>
+						{item.title}
+					</Text>
+				</View>
 			</TouchableOpacity>
 			<TouchableOpacity
 				onPress={() => onDelete(item)}
 				style={{
 					position: 'absolute',
 					right: 0,
-					bottom: 0,
-					paddingVertical: 2,
-					paddingHorizontal: 4,
-					borderRadius: 10,
-					backgroundColor: 'white',
+					top: 0,
+					paddingHorizontal: 10,
+					paddingVertical: 8,
+					backgroundColor: 'black',
+					borderRadius: 16,
 				}}
 			>
-				<FontAwesome name='trash-o' size={24} color='black' />
+				<FontAwesome name='trash-o' size={20} color='red' />
 			</TouchableOpacity>
 		</View>
 	);

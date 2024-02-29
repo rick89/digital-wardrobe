@@ -31,6 +31,7 @@ export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 						backgroundColor: '#d9d9d9',
 						marginTop: 10,
 						borderRadius: 10,
+						marginBottom: 10,
 					}}
 				>
 					<TouchableOpacity
@@ -38,15 +39,15 @@ export default function MonthCard({ month, items, onDelete }: MonthCardProps) {
 						style={{
 							position: 'absolute',
 							right: 0,
+							top: -10,
+							paddingHorizontal: 10,
 							zIndex: 100,
-							top: 0,
-							paddingVertical: 2,
-							paddingHorizontal: 4,
-							borderRadius: 10,
+							paddingVertical: 8,
 							backgroundColor: 'black',
+							borderRadius: 16,
 						}}
 					>
-						<FontAwesome name='trash-o' size={24} color='red' />
+						<FontAwesome name='trash-o' size={20} color='red' />
 					</TouchableOpacity>
 					{item.date && (
 						<View>
