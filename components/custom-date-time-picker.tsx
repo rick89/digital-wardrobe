@@ -33,21 +33,11 @@ export default function CustomDateTimePicker({
 	return (
 		<View
 			style={{
-				//@ts-ignore
 				...style,
 			}}
 		>
 			<SafeAreaView>
-				<View>
-					{/* <Button
-						onPress={() => {
-							setIsDateVisible(true);
-							setIsTimeVisible(true);
-						}}
-						title='Pick a date'
-					/> */}
-				</View>
-				<View style={{ flexDirection: 'row' }}>
+				<View style={{ flexDirection: 'row', marginLeft: -10 }}>
 					{isDateVisible && (
 						<DateTimePicker
 							testID='dateTimePicker'

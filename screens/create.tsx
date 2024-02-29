@@ -114,7 +114,14 @@ export default function CreateScreen() {
 			dispatch(saveTag(tag));
 		}
 		console.log('select the clothing tag');
-		setSelectedClothingTags([...selectedClothingTags, tag]);
+		if (selectedClothingTags.includes(tag)) {
+			const filteredTags = selectedClothingTags.filter(
+				(item) => item.id !== tag.id
+			);
+			setSelectedClothingTags(filteredTags);
+		} else {
+			setSelectedClothingTags([...selectedClothingTags, tag]);
+		}
 	};
 
 	const handleToggleOutfitTagSelection = (tag: Tag) => {
@@ -191,16 +198,45 @@ export default function CreateScreen() {
 								onPress={() => {
 									toggleDateTimePicker('clothing');
 								}}
+								style={{
+									flexDirection: 'row',
+									backgroundColor: '#42a4f5',
+									borderRadius: 8,
+									paddingVertical: 8,
+									paddingHorizontal: 10,
+									marginBottom: 20,
+									alignItems: 'center',
+								}}
 							>
 								<Text
 									style={{
-										...styles.calendarLink,
+										color: 'white',
+										fontSize: 16,
 									}}
 								>
 									{showClothingDateTimePicker
 										? 'Cancel'
 										: 'Add to calendar'}
 								</Text>
+								{showClothingDateTimePicker ? (
+									<AntDesign
+										style={{
+											marginLeft: 20,
+										}}
+										name='closecircle'
+										size={20}
+										color='white'
+									/>
+								) : (
+									<AntDesign
+										style={{
+											marginLeft: 20,
+										}}
+										name='calendar'
+										size={20}
+										color='white'
+									/>
+								)}
 							</TouchableOpacity>
 						</View>
 						{showClothingDateTimePicker ? (
@@ -210,7 +246,9 @@ export default function CreateScreen() {
 										DateTime.fromJSDate(dateTime)
 									)
 								}
-								style={{ marginBottom: 20 }}
+								style={{
+									marginBottom: 20,
+								}}
 							/>
 						) : null}
 					</View>

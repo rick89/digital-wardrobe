@@ -16,7 +16,7 @@ export type Outfit = {
 	title: string;
 	images: ImageObject[];
 	clothes: ClothingItem[];
-	date: Date;
+	date: string | null;
 	tags: Tag[];
 };
 
@@ -63,11 +63,6 @@ export const testSlice = createSlice({
 				}
 			);
 			state.individualClothingItems.splice(itemIndex, 1);
-
-			// @ToDo why oes filter not work here?
-			// state.individualClothingItems.filter(
-			//  (item) => item.id === action.payload
-			// );
 		},
 		saveTag(state, action: PayloadAction<Tag>) {
 			state.tags.push({
@@ -83,9 +78,6 @@ export const testSlice = createSlice({
 				return item.id === action.payload;
 			});
 			state.tags.splice(itemIndex, 1);
-
-			// @ToDo why does filter not work here
-			//state.tags.filter((item) => item.id === action.payload);
 		},
 		removeClothingItemFromCalendar(state, action: PayloadAction<string>) {
 			const clothingItem = state.individualClothingItems.find(

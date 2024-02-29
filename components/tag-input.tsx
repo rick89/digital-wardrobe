@@ -120,7 +120,12 @@ export default function TagInput({
 					return selectedTags?.find(
 						(selectedTag) => selectedTag.id === filteredTag.id
 					) ? (
-						<View
+						<TouchableOpacity
+							onPress={() =>
+								!isTagEditor
+									? selectedTag(filteredTag)
+									: onDelete && onDelete(filteredTag)
+							}
 							style={{
 								backgroundColor: 'green',
 								paddingHorizontal: 12,
@@ -144,7 +149,7 @@ export default function TagInput({
 								size={20}
 								color='white'
 							/>
-						</View>
+						</TouchableOpacity>
 					) : (
 						<TouchableOpacity
 							onPress={() =>
