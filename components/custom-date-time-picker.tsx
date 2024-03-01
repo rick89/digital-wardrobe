@@ -31,11 +31,7 @@ export default function CustomDateTimePicker({
 	};
 
 	return (
-		<View
-			style={{
-				...style,
-			}}
-		>
+		<View>
 			<SafeAreaView>
 				<View style={{ flexDirection: 'row', marginLeft: -10 }}>
 					{isDateVisible && (

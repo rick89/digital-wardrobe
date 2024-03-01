@@ -246,9 +246,6 @@ export default function CreateScreen() {
 										DateTime.fromJSDate(dateTime)
 									)
 								}
-								style={{
-									marginBottom: 20,
-								}}
 							/>
 						) : null}
 					</View>
@@ -306,7 +303,6 @@ export default function CreateScreen() {
 										DateTime.fromJSDate(dateTime)
 									)
 								}
-								style={{ marginBottom: 20 }}
 							/>
 						) : null}
 					</View>
