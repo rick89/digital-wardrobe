@@ -91,13 +91,17 @@ export default function HomeScreen() {
 						flexDirection: 'row',
 						alignItems: 'center',
 						flex: 1,
+						justifyContent: 'center',
 					}}
 				>
-					<Text style={{ fontSize: 16 }}>
-						Welcome to Garms, use the bouncing button below to add
-						clothes to your wardrobe once you have added a clothing
-						item you will be able to create outfits and assign them
-						to your calendar.
+					<Text
+						style={{
+							fontSize: 20,
+							lineHeight: 22,
+							textAlign: 'center',
+						}}
+					>
+						Welcome to Garms! Press create to get started.
 					</Text>
 				</View>
 			</ScreenWrapper>
@@ -131,31 +135,35 @@ export default function HomeScreen() {
 					flexDirection: 'column',
 				}}
 			>
-				<View style={{ marginBottom: 10 }}>
+				<View style={{ marginVertical: 10 }}>
 					<SearchInput
 						value={searchTerm}
 						onChangeText={(searchTerm) => setSearchTerm(searchTerm)}
 					/>
 				</View>
-				<Text
-					style={{
-						marginTop: 20,
-						fontWeight: 'bold',
-						marginBottom: 6,
-					}}
-				>
-					Filters:{' '}
-				</Text>
-				<ScrollView
-					horizontal={true}
-					style={{ flexDirection: 'row', marginTop: 0 }}
-				>
-					<TagFilter
-						selectedTags={selectedTags}
-						onPress={(tag) => toggleTagSelection(tag)}
-						tags={clothingTags}
-					/>
-				</ScrollView>
+				{clothingTags.length > 0 ? (
+					<>
+						<Text
+							style={{
+								marginTop: 20,
+								fontWeight: 'bold',
+								marginBottom: 6,
+							}}
+						>
+							Filters:{' '}
+						</Text>
+						<ScrollView
+							horizontal={true}
+							style={{ flexDirection: 'row', marginTop: 0 }}
+						>
+							<TagFilter
+								selectedTags={selectedTags}
+								onPress={(tag) => toggleTagSelection(tag)}
+								tags={clothingTags}
+							/>
+						</ScrollView>
+					</>
+				) : null}
 			</View>
 			<ClothingOutfitTabNav
 				onPress={(selectedTab) => {
