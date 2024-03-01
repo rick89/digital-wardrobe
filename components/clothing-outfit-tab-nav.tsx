@@ -1,8 +1,8 @@
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 export type ClothingOutfitTabNavProps = {
-	onPress: (selectedTab: string) => void;
-	selectedTab: string;
+	onPress: (selectedTab: 'clothing' | 'outfit') => void;
+	selectedTab: 'clothing' | 'outfit';
 };
 
 export default function ClothingOutfitTabNav({

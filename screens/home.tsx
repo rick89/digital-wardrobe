@@ -34,7 +34,9 @@ export default function HomeScreen() {
 		(tag) => tag.type === 'clothing'
 	);
 	const dispatch = useClothingDispatch();
-	const [selectedTab, setSelectedTab] = useState<string>('clothing');
+	const [selectedTab, setSelectedTab] = useState<'clothing' | 'outfit'>(
+		'clothing'
+	);
 
 	let allClothing = useClothingSelector((state) => {
 		return state.individualClothingItems;
