@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import {
-	Text,
-	View,
-	Image,
-	ScrollView,
-	TouchableOpacity,
-	StyleSheet,
-} from 'react-native';
+import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
-import { ClothingItem, Outfit, Tag } from '../store/slices/clothing-slice';
+import {
+	ClothingItem,
+	ItemType,
+	Outfit,
+	Tag,
+} from '../store/slices/clothing-slice';
 import { useClothingDispatch } from '../store/hooks';
 import { saveClothing } from '../store/slices/clothing-slice';
 import { useNavigation } from '@react-navigation/native';
@@ -37,7 +35,13 @@ export default function CreateScreen() {
 	const [outfitItemName, setOutfitItemName] = useState<string>('');
 	const [selectedOutfitTags, setSelectedOutfitTags] = useState<Tag[]>([]);
 	const [outfitDateTime, setOutfitDateTime] = useState<DateTime | null>(null);
-	const [selectedTab, setSelectedTab] = useState<string>('clothing');
+	const [selectedTab, setSelectedTab] = useState<ItemType>('clothing');
+	const [
+		clothingDateTimePickerIsVisible,
+		setClothingDateTimePickerIsVisible,
+	] = useState(false);
+	const [outfitDateTimePickerIsVisible, setOutfitDateTimePickerIsVisible] =
+		useState(false);
 	const [outfitTagInputText, setOutfitTagInputText] = useState<string>('');
 	const [clothingTagInputText, setClothingTagInputText] =
 		useState<string>('');
@@ -45,10 +49,6 @@ export default function CreateScreen() {
 	const [uploadedClothingImages, setUploadedClothingImages] = useState<
 		ImageObject[]
 	>([]);
-	const [showOutfitDateTimePicker, setShowOutfitDateTimePicker] =
-		useState<boolean>(false);
-	const [showClothingDateTimePicker, setShowClothingDateTimePicker] =
-		useState<boolean>(false);
 	const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
 	const clearFormData = () => {
@@ -58,14 +58,15 @@ export default function CreateScreen() {
 			setClothingDateTime(null);
 			setClothingTagInputText('');
 			setUploadedClothingImages([]);
-			setShowClothingDateTimePicker(false);
+			setClothingDateTime(null);
+			setClothingDateTimePickerIsVisible(false);
 		} else {
 			setOutfitItemName('');
 			setSelectedOutfitTags([]);
 			setOutfitDateTime(null);
 			setOutfitTagInputText('');
-			setShowOutfitDateTimePicker(false);
-			// setUploadedOutfitImageUris([]);
+			setOutfitDateTime(null);
+			setOutfitDateTimePickerIsVisible(false);
 		}
 	};
 
@@ -133,34 +134,41 @@ export default function CreateScreen() {
 		setSelectedOutfitTags([...selectedOutfitTags, tag]);
 	};
 
-	const toggleDateTimePicker = (type: string) => {
-		if (type === 'clothing') {
-			const addToCalendar = !showClothingDateTimePicker;
-			setClothingDateTime(null);
-			if (addToCalendar) {
-				setClothingDateTime(DateTime.now());
-			}
-			setShowClothingDateTimePicker(!showClothingDateTimePicker);
-		} else {
-			const addToCalendar = !showOutfitDateTimePicker;
-			setOutfitDateTime(null);
-			if (addToCalendar) {
-				setOutfitDateTime(DateTime.now());
-			}
-			setShowOutfitDateTimePicker(!showOutfitDateTimePicker);
-		}
-	};
-
 	const onDeleteUploadedClothingImage = (id: string) => {
 		setUploadedClothingImages(
 			uploadedClothingImages.filter((image) => image.id !== id)
 		);
 	};
 
+	const toggleDateTimeVisibility = (isVisible: boolean) => {
+		if (selectedTab === 'clothing') {
+			setClothingDateTimePickerIsVisible(isVisible);
+		}
+		if (selectedTab === 'outfit') {
+			setOutfitDateTimePickerIsVisible(isVisible);
+		}
+	};
+
+	const setDateTime = (dateTime: DateTime | null) => {
+		console.log('selectedTab', selectedTab);
+		if (selectedTab === 'outfit') {
+			setOutfitDateTime(dateTime);
+		}
+		if (selectedTab === 'clothing') {
+			setClothingDateTime(dateTime);
+		}
+	};
+
+	const selectATab = (tab: ItemType) => {
+		setClothingDateTime(null);
+		setOutfitDateTime(null);
+		setSelectedTab(tab);
+	};
+
 	return (
 		<ScreenWrapper>
 			<ClothingOutfitTabNav
-				onPress={(selectedTab) => setSelectedTab(selectedTab)}
+				onPress={(selectedTab) => selectATab(selectedTab)}
 				selectedTab={selectedTab}
 			/>
 			<ScrollView style={{ flexGrow: 1 }}>
@@ -189,65 +197,15 @@ export default function CreateScreen() {
 							}
 							style={{ marginBottom: 20 }}
 						/>
-						<View
-							style={{
-								...styles.calendarLinkContainer,
-							}}
-						>
-							<TouchableOpacity
-								onPress={() => {
-									toggleDateTimePicker('clothing');
-								}}
-								style={{
-									flexDirection: 'row',
-									backgroundColor: '#42a4f5',
-									borderRadius: 8,
-									paddingVertical: 8,
-									paddingHorizontal: 10,
-									marginBottom: 20,
-									alignItems: 'center',
-								}}
-							>
-								<Text
-									style={{
-										color: 'white',
-										fontSize: 16,
-									}}
-								>
-									{showClothingDateTimePicker
-										? 'Cancel'
-										: 'Add to calendar'}
-								</Text>
-								{showClothingDateTimePicker ? (
-									<AntDesign
-										style={{
-											marginLeft: 20,
-										}}
-										name='closecircle'
-										size={20}
-										color='white'
-									/>
-								) : (
-									<AntDesign
-										style={{
-											marginLeft: 20,
-										}}
-										name='calendar'
-										size={20}
-										color='white'
-									/>
-								)}
-							</TouchableOpacity>
-						</View>
-						{showClothingDateTimePicker ? (
-							<CustomDateTimePicker
-								selectedDateTime={(dateTime) =>
-									setClothingDateTime(
-										DateTime.fromJSDate(dateTime)
-									)
-								}
-							/>
-						) : null}
+
+						<CustomDateTimePicker
+							toggleVisibility={(isVisible) =>
+								toggleDateTimeVisibility(isVisible)
+							}
+							isVisible={clothingDateTimePickerIsVisible}
+							for={selectedTab}
+							selectedDateTime={(value) => setDateTime(value)}
+						/>
 					</View>
 				) : (
 					<View>
@@ -271,40 +229,14 @@ export default function CreateScreen() {
 							}}
 							style={{ marginBottom: 20 }}
 						/>
-						<View
-							style={{
-								...styles.calendarLinkContainer,
-							}}
-						>
-							<TouchableOpacity
-								onPress={() => {
-									toggleDateTimePicker('outfit');
-								}}
-								style={{
-									...styles.calendarLinkContainer,
-								}}
-							>
-								<Text
-									style={{
-										...styles.calendarLink,
-									}}
-								>
-									{showOutfitDateTimePicker
-										? 'Cancel'
-										: 'Add to calendar'}
-								</Text>
-							</TouchableOpacity>
-						</View>
-
-						{showOutfitDateTimePicker ? (
-							<CustomDateTimePicker
-								selectedDateTime={(dateTime) =>
-									setOutfitDateTime(
-										DateTime.fromJSDate(dateTime)
-									)
-								}
-							/>
-						) : null}
+						<CustomDateTimePicker
+							toggleVisibility={(isVisible) =>
+								toggleDateTimeVisibility(isVisible)
+							}
+							isVisible={outfitDateTimePickerIsVisible}
+							for={selectedTab}
+							selectedDateTime={(value) => setDateTime(value)}
+						/>
 					</View>
 				)}
 				{selectedTab === 'clothing' ? (
@@ -390,15 +322,3 @@ export default function CreateScreen() {
 		</ScreenWrapper>
 	);
 }
-
-const styles = StyleSheet.create({
-	calendarLink: {
-		fontWeight: 'bold',
-		marginBottom: 20,
-		color: '#42a4f5',
-		textDecorationLine: 'underline',
-	},
-	calendarLinkContainer: {
-		flexWrap: 'wrap',
-	},
-});

@@ -1,18 +1,22 @@
 import { useState } from 'react';
-import { View, SafeAreaView, Text, StyleProp, ViewStyle } from 'react-native';
-import Button from './custom-button';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker, {
 	DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import { DateTime } from 'luxon';
+import { AntDesign } from '@expo/vector-icons';
 
 export type CustomDateTimePickerProps = {
-	selectedDateTime: (dateTime: Date) => void;
-	style?: StyleProp<ViewStyle>;
+	selectedDateTime: (dateTime: DateTime | null) => void;
+	for: 'clothing' | 'outfit';
+	toggleVisibility: (isVisible: boolean) => void;
+	isVisible: boolean;
 };
 
 export default function CustomDateTimePicker({
 	selectedDateTime,
-	style,
+	toggleVisibility,
+	isVisible,
 }: CustomDateTimePickerProps) {
 	const [date, setDate] = useState(new Date());
 	const [isDateVisible, setIsDateVisible] = useState(true);
@@ -26,13 +30,70 @@ export default function CustomDateTimePicker({
 		if (typeof selectedDate === 'undefined') {
 			return;
 		}
-		selectedDateTime(selectedDate);
+		selectedDateTime(DateTime.fromJSDate(selectedDate));
 		setDate(selectedDate);
+	};
+
+	const toggleDateTimePicker = () => {
+		const addToCalendar = !isVisible;
+		selectedDateTime(null);
+		if (addToCalendar) {
+			selectedDateTime(DateTime.now());
+		}
+		toggleVisibility(!isVisible);
 	};
 
 	return (
 		<View>
-			<SafeAreaView>
+			<View
+				style={{
+					...styles.calendarLinkContainer,
+				}}
+			>
+				<TouchableOpacity
+					onPress={() => {
+						toggleDateTimePicker();
+					}}
+					style={{
+						flexDirection: 'row',
+						backgroundColor: '#42a4f5',
+						borderRadius: 8,
+						paddingVertical: 8,
+						paddingHorizontal: 10,
+						marginBottom: 20,
+						alignItems: 'center',
+					}}
+				>
+					<Text
+						style={{
+							color: 'white',
+							fontSize: 16,
+						}}
+					>
+						{isVisible ? 'Cancel' : 'Add to calendar'}
+					</Text>
+					{isVisible ? (
+						<AntDesign
+							style={{
+								marginLeft: 20,
+							}}
+							name='closecircle'
+							size={20}
+							color='white'
+						/>
+					) : (
+						<AntDesign
+							style={{
+								marginLeft: 20,
+							}}
+							name='calendar'
+							size={20}
+							color='white'
+						/>
+					)}
+				</TouchableOpacity>
+			</View>
+			{isVisible ? (
 				<View style={{ flexDirection: 'row', marginLeft: -10 }}>
 					{isDateVisible && (
 						<DateTimePicker
@@ -55,7 +116,19 @@ export default function CustomDateTimePicker({
 						/>
 					)}
 				</View>
-			</SafeAreaView>
+			) : null}
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	calendarLink: {
+		fontWeight: 'bold',
+		marginBottom: 20,
+		color: '#42a4f5',
+		textDecorationLine: 'underline',
+	},
+	calendarLinkContainer: {
+		flexWrap: 'wrap',
+	},
+});
