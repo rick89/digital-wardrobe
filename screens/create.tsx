@@ -199,6 +199,7 @@ export default function CreateScreen() {
 						/>
 
 						<CustomDateTimePicker
+							key={'clothingDateTimePicker'}
 							toggleVisibility={(isVisible) =>
 								toggleDateTimeVisibility(isVisible)
 							}
@@ -230,6 +231,7 @@ export default function CreateScreen() {
 							style={{ marginBottom: 20 }}
 						/>
 						<CustomDateTimePicker
+							key={'outfitDateTimePicker'}
 							toggleVisibility={(isVisible) =>
 								toggleDateTimeVisibility(isVisible)
 							}
