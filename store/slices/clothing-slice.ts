@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ImageObject } from '../../components/image-upload';
 import { DateTime } from 'luxon';
+
+export type ItemType = 'clothing' | 'outfit';
+
 export type ClothingItem = {
 	id: string;
 	title: string;
@@ -24,7 +27,7 @@ export type Tag = {
 	id: string;
 	new?: boolean;
 	title: string;
-	type: 'clothing' | 'outfit';
+	type: ItemType;
 };
 
 export type Filter = {

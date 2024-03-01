@@ -3,7 +3,12 @@ import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import Input from '../components/input';
 import ScreenWrapper from '../components/screen-wrapper';
 import TagInput from '../components/tag-input';
-import { ClothingItem, Outfit, Tag } from '../store/slices/clothing-slice';
+import {
+	ClothingItem,
+	ItemType,
+	Outfit,
+	Tag,
+} from '../store/slices/clothing-slice';
 import { useClothingDispatch } from '../store/hooks';
 import { saveClothing } from '../store/slices/clothing-slice';
 import { useNavigation } from '@react-navigation/native';
@@ -30,9 +35,7 @@ export default function CreateScreen() {
 	const [outfitItemName, setOutfitItemName] = useState<string>('');
 	const [selectedOutfitTags, setSelectedOutfitTags] = useState<Tag[]>([]);
 	const [outfitDateTime, setOutfitDateTime] = useState<DateTime | null>(null);
-	const [selectedTab, setSelectedTab] = useState<'clothing' | 'outfit'>(
-		'clothing'
-	);
+	const [selectedTab, setSelectedTab] = useState<ItemType>('clothing');
 	const [
 		clothingDateTimePickerIsVisible,
 		setClothingDateTimePickerIsVisible,
@@ -146,7 +149,7 @@ export default function CreateScreen() {
 		}
 	};
 
-	const setDateTime = (dateTime: DateTime) => {
+	const setDateTime = (dateTime: DateTime | null) => {
 		console.log('selectedTab', selectedTab);
 		if (selectedTab === 'outfit') {
 			setOutfitDateTime(dateTime);
@@ -156,9 +159,9 @@ export default function CreateScreen() {
 		}
 	};
 
-	const selectATab = (tab: 'clothing' | 'outfit') => {
-		setClothingDateTime(clothingDateTime);
-		setOutfitDateTime(outfitDateTime);
+	const selectATab = (tab: ItemType) => {
+		setClothingDateTime(null);
+		setOutfitDateTime(null);
 		setSelectedTab(tab);
 	};
 
@@ -170,7 +173,7 @@ export default function CreateScreen() {
 			/>
 			<ScrollView style={{ flexGrow: 1 }}>
 				{selectedTab === 'clothing' ? (
-					<View style={{ marginBottom: 20 }}>
+					<View>
 						<Input
 							focus={true}
 							value={clothingItemName}
@@ -205,7 +208,7 @@ export default function CreateScreen() {
 						/>
 					</View>
 				) : (
-					<View style={{ marginBottom: 20 }}>
+					<View>
 						<Input
 							value={outfitItemName}
 							placeholder='Name'

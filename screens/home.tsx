@@ -5,7 +5,6 @@ import {
 	FlatList,
 	Alert,
 	ScrollView,
-	TouchableOpacity,
 	ListRenderItem,
 } from 'react-native';
 import ScreenWrapper from '../components/screen-wrapper';
@@ -14,16 +13,15 @@ import ClothingCard from '../components/clothing-card';
 import TagFilter from '../components/tag-filter';
 import { useClothingSelector } from '../store/hooks';
 import { useClothingDispatch } from '../store/hooks';
-import { AntDesign } from '@expo/vector-icons';
 
 import {
 	ClothingItem,
+	ItemType,
 	Outfit,
 	Tag,
 	deleteClothing,
 } from '../store/slices/clothing-slice';
 import ClothingOutfitTabNav from '../components/clothing-outfit-tab-nav';
-import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -34,9 +32,7 @@ export default function HomeScreen() {
 		(tag) => tag.type === 'clothing'
 	);
 	const dispatch = useClothingDispatch();
-	const [selectedTab, setSelectedTab] = useState<'clothing' | 'outfit'>(
-		'clothing'
-	);
+	const [selectedTab, setSelectedTab] = useState<ItemType>('clothing');
 
 	let allClothing = useClothingSelector((state) => {
 		return state.individualClothingItems;
