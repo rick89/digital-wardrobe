@@ -25,7 +25,6 @@ import { FontAwesome } from '@expo/vector-icons';
 import Toast from '../components/toast.tsx';
 
 export default function CreateScreen() {
-	const navigation = useNavigation();
 	const dispatch = useClothingDispatch();
 	const [clothingItemName, setClothingItemName] = useState<string>('');
 	const [selectedClothingTags, setSelectedClothingTags] = useState<Tag[]>([]);
@@ -173,7 +172,13 @@ export default function CreateScreen() {
 			/>
 			<ScrollView style={{ flexGrow: 1 }}>
 				{selectedTab === 'clothing' ? (
-					<View>
+					<View
+						style={{
+							marginBottom: clothingDateTimePickerIsVisible
+								? 20
+								: 0,
+						}}
+					>
 						<Input
 							focus={true}
 							value={clothingItemName}
@@ -209,7 +214,13 @@ export default function CreateScreen() {
 						/>
 					</View>
 				) : (
-					<View>
+					<View
+						style={{
+							marginBottom: outfitDateTimePickerIsVisible
+								? 20
+								: 0,
+						}}
+					>
 						<Input
 							value={outfitItemName}
 							placeholder='Name'

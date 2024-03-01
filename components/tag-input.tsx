@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
 	View,
 	Text,
@@ -7,7 +6,6 @@ import {
 	ViewStyle,
 } from 'react-native';
 import Input from './input';
-import { useClothingSelector } from '../store/hooks';
 import { AntDesign } from '@expo/vector-icons';
 import { Tag } from '../store/slices/clothing-slice';
 import { uniqueId } from '../utils/helpers';

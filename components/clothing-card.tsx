@@ -2,7 +2,6 @@ import { View, TouchableOpacity, Dimensions, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { FontAwesome } from '@expo/vector-icons';
 import { ClothingItem, Outfit } from '../store/slices/clothing-slice';
-import { isOutfit } from '../utils/helpers';
 import { useRef } from 'react';
 
 export type ClothingCardProps = {
@@ -23,11 +22,6 @@ export default function ClothingCard({
 	let type: 'clothingItem' | 'outfit' = 'clothingItem';
 	const images: string[] = [];
 	let imageUriRef = useRef<string | null>(null);
-
-	console.log('imageUriRef', imageUriRef);
-	console.log('item.images', item.images);
-	// item is an individual clothing item
-	// const image = item.images[0].uri;
 	imageUriRef.current = item.images.length > 0 ? item.images[0].uri : '';
 
 	return (

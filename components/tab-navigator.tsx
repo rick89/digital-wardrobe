@@ -1,6 +1,3 @@
-import { ReactNode } from 'react';
-import { View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CreateScreen from '../screens/create.tsx';
 import UpcomingScreen from '../screens/upcoming.tsx';

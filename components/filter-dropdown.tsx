@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View } from 'react-native';
 import { DropdownMultiselectView } from 'expo-dropdown-multiselect';
-import { useClothingSelector } from '../store/hooks';
-import { Filter, Tag } from '../store/slices/clothing-slice';
+import { Tag } from '../store/slices/clothing-slice';
 
 export type TagFilterProps = {
 	onChange: (selectedItems: any[]) => any;

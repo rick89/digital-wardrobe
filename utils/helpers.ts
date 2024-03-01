@@ -11,7 +11,7 @@ export const objectIsEmpty = (obj: {}) => {
 	return Object.keys(obj).length === 0;
 };
 
-// @Tod REMOVE ANY we need a new type to represent the object being returned, type that can be indexe by a string
+// @Todo REMOVE ANY we need a new type that can be indexed by a string to represent the object being returned.
 export const groupByDate = (filteredClothing: ClothingItem[]): any => {
 	return filteredClothing.reduce((months: any, item) => {
 		if (!item.date) {

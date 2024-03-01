@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker, {
 	DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
 import { AntDesign } from '@expo/vector-icons';
+import { ItemType } from '../store/slices/clothing-slice';
 
 export type CustomDateTimePickerProps = {
 	selectedDateTime: (dateTime: DateTime | null) => void;
-	for: 'clothing' | 'outfit';
+	for: ItemType;
 	toggleVisibility: (isVisible: boolean) => void;
 	isVisible: boolean;
 };
@@ -47,7 +48,7 @@ export default function CustomDateTimePicker({
 		<View>
 			<View
 				style={{
-					...styles.calendarLinkContainer,
+					flexWrap: 'wrap',
 				}}
 			>
 				<TouchableOpacity
@@ -120,15 +121,3 @@ export default function CustomDateTimePicker({
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	calendarLink: {
-		fontWeight: 'bold',
-		marginBottom: 20,
-		color: '#42a4f5',
-		textDecorationLine: 'underline',
-	},
-	calendarLinkContainer: {
-		flexWrap: 'wrap',
-	},
-});

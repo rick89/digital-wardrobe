@@ -1,8 +1,6 @@
-import { type ReactNode } from 'react';
 import { Text, View, ScrollView, Alert } from 'react-native';
 import ScreenWrapper from '../components/screen-wrapper';
 import { useClothingSelector } from '../store/hooks';
-import { DateTime } from 'luxon';
 import {
 	ClothingItem,
 	removeClothingItemFromCalendar,

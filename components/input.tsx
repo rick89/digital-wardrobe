@@ -1,11 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-	NativeSyntheticEvent,
-	StyleProp,
-	TextInput,
-	TextInputKeyPressEventData,
-	ViewStyle,
-} from 'react-native';
+import { StyleProp, TextInput, ViewStyle } from 'react-native';
 
 export type TextInputProps = {
 	placeholder?: string;
